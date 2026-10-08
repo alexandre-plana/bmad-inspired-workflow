@@ -1,0 +1,4 @@
+node_modules/
+documentation/history/executions/.etat/
+*.log
+__pycache__/

@@ -1,0 +1,130 @@
+{
+  "skill_name": "screen-composition",
+  "evals": [
+    {
+      "id": 1,
+      "name": "dashboard-surcharge",
+      "prompt": "Compose un dashboard avec 15 KPI, 8 graphes et les actions principales.",
+      "expected_output": "Refuse la grille uniforme telle quelle ; établit la tâche et la décision ; priorise écarts et anomalies ; relègue ou supprime les KPI sans action ni référence ; ne nomme aucun composant.",
+      "files": [],
+      "assertions": [
+        "Établit la tâche primaire et la décision avant toute grille",
+        "Refuse la grille uniforme de KPI et commence par écarts / anomalies / décisions",
+        "Classe les éléments P0–P4 et relègue ou supprime les KPI sans référence",
+        "Ne nomme aucun composant, token, palette ou bibliothèque"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "suppression-irreversible",
+      "prompt": "Il faut permettre de supprimer définitivement un workspace. Fais l'UI.",
+      "expected_output": "Traite risque et réversibilité ; interruption justifiée par le risque ; conséquence explicite avant l'action ; CTA destructif nommé par son effet ; sortie claire.",
+      "files": [],
+      "assertions": [
+        "Traite le risque et la réversibilité dans le modèle de tâche",
+        "Justifie l'interruption (modal / dialog) par le risque, pas par commodité technique",
+        "Nomme le CTA destructif par son effet (ex. « Supprimer le workspace »), jamais OK / Valider / Submit",
+        "Énonce la conséquence avant l'action et fournit une sortie sans accomplir l'action"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "edition-depuis-liste",
+      "prompt": "En cliquant sur un utilisateur dans la table, je veux éditer son nom, rôle et équipe.",
+      "expected_output": "Détail ou panel non modal si le contexte liste reste utile ; explique quand escalader vers une surface plus large ; n'impose aucune bibliothèque.",
+      "files": [],
+      "assertions": [
+        "Propose une surface secondaire non modale tant que le contexte liste est utile, ou explique quand escalader",
+        "Ne nomme aucune bibliothèque ni composant concret",
+        "Ordre de lecture identité → état → contrôles → détail"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "formulaire-35-champs-modal",
+      "prompt": "Mets ce formulaire de 35 champs dans une modal.",
+      "expected_output": "Conteste la modal ; propose page, panel large ou étapes selon contexte ; explique charge cognitive et scroll.",
+      "files": [],
+      "assertions": [
+        "Conteste la modal en citant la charge, le scroll ou la longueur",
+        "Propose page, panel large ou découpage en étapes selon le contexte",
+        "Ne produit aucun choix visuel"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "camembert-18-categories",
+      "prompt": "Fais un camembert pour 18 catégories.",
+      "expected_output": "Recommande des barres triées ou une représentation comparable ; justifie par la question analytique.",
+      "files": [],
+      "assertions": [
+        "Recommande des barres triées ou une alternative comparable au lieu du camembert",
+        "Justifie par la question analytique (comparer des catégories)",
+        "Rappelle que la couleur ne peut pas être le seul canal sémantique"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "design-system-autoritaire",
+      "prompt": "Compose le panneau de suivi des bouées dans le projet cible ; frontend-ui-ux impose OpenBridge.",
+      "expected_output": "Ne choisit aucun composant concurrent ; livre un contrat abstrait ; renvoie la matérialisation à frontend-ui-ux.",
+      "files": [],
+      "assertions": [
+        "Ne choisit aucun composant concurrent d'OpenBridge ni aucun composant concret",
+        "Livre un contrat abstrait complet (P0–P4, ordre, surface, actions, états)",
+        "Renvoie explicitement la matérialisation à frontend-ui-ux"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "maquette-contractuelle",
+      "prompt": "Voici une maquette contractuelle sous documentation/mockups/ ; implémente-la, aucune refonte n'est demandée.",
+      "expected_output": "Ne redessine pas ; explicite la logique et couvre les zones non spécifiées ; toute divergence présentée comme écart à arbitrer.",
+      "files": [],
+      "assertions": [
+        "Ne substitue aucun layout à celui de la maquette",
+        "Se limite à expliciter la logique et aux zones non spécifiées ou incohérentes",
+        "Présente toute divergence comme un écart à arbitrer, jamais comme une correction silencieuse"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "supervision-lecture-seule",
+      "prompt": "Compose un panneau d'état des liaisons avec les systèmes partenaires. Aucune route de commande n'existe : lecture seule.",
+      "expected_output": "Primary = aucune, explicitement ; aucun bouton Réessayer / Reconnecter inventé ; la consigne à l'humain est traitée comme information P0 ; états stale / partial avec âge visible.",
+      "files": [],
+      "assertions": [
+        "Déclare explicitement Primary — aucune dans ACTIONS",
+        "N'invente aucun bouton Réessayer / Reconnecter sans route ni autorité",
+        "Traite la consigne adressée à l'humain comme information P0, pas comme contrôle",
+        "Définit les états stale / partial avec l'âge de la donnée visible"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "maquette-vs-backend",
+      "prompt": "La maquette affiche « essai 3 sur 6 » et « essais épuisés » ; le backend n'expose ni plafond ni compteur. Compose le détail de la liaison.",
+      "expected_output": "Vérifie l'existence de la donnée à l'inventaire ; consigne l'écart dans GAPS TO ARBITRATE ; ne le fait pas passer par le protocole d'écart d'implémentation ; propose une alternative composable.",
+      "files": [],
+      "assertions": [
+        "Vérifie l'existence réelle de la donnée à l'étape d'inventaire",
+        "Consigne l'écart dans GAPS TO ARBITRATE avec nature, constat et recommandation",
+        "Ne renvoie pas l'écart vers le protocole d'écart d'implémentation du skill projet",
+        "Propose une alternative composable (consigne dérivée d'une durée, ou exposition du compteur)"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "conteneur-impose",
+      "prompt": "Compose l'intérieur du panneau interop-links : c'est une tuile dockview du projet cible, ouvrable aussi sur le mur d'écrans.",
+      "expected_output": "Conteneur déclaré comme contrainte d'entrée ; l'algorithme de surface ne décide que l'intérieur ; lecture à distance traitée ; conteneur nommé via la table de correspondance du skill projet.",
+      "files": [],
+      "assertions": [
+        "Déclare le conteneur comme contrainte d'entrée (PROJECT CONSTRAINTS), pas comme décision de surface",
+        "Limite l'algorithme de surface à l'intérieur (maître-détail inline, accordéon)",
+        "Traite la lecture à distance (mur / far) : liste ou résumé seuls, détail inerte de loin",
+        "Nomme le conteneur via la table de correspondance du skill projet, jamais « page dédiée »"
+      ]
+    }
+  ]
+}

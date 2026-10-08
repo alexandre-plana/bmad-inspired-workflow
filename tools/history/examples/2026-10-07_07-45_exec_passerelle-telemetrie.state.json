@@ -1,0 +1,230 @@
+{
+ "schema": "workflow-run-state/1",
+ "runId": "2026-10-07_07-45_exec_passerelle-telemetrie",
+ "seq": 11,
+ "updatedAt": "2026-10-07T07:45:24+02:00",
+ "run": {
+  "status": "running",
+  "outcome": null,
+  "startedAt": "2026-10-07T07:45:22+02:00",
+  "endedAt": null,
+  "session": 2,
+  "profile": "opus-5-5",
+  "isolation": "none",
+  "gitea": false,
+  "orchestrator": "execute-plan",
+  "wait": null,
+  "interruption": null
+ },
+ "plan": {
+  "artifact": "tasks/2026-10-06_16-20_task_passerelle-telemetrie/index.md",
+  "path": "documentation/history/tasks/2026-10-06_16-20_task_passerelle-telemetrie/index.md",
+  "form": "sharded",
+  "slug": "passerelle-telemetrie",
+  "title": "Passerelle de télémétrie du drone",
+  "kind": "task",
+  "status": "executing",
+  "doneConfirmation": null
+ },
+ "checkout": {
+  "root": "C:/DEV/project",
+  "branch": "claude/exemple-suivi",
+  "baseline": "821d8195f143f5b14742360190e0037f5004e38a",
+  "worktree": false
+ },
+ "repos": {
+  "project": {
+   "path": "C:/DEV/project",
+   "branch": "claude/exemple-suivi",
+   "baseline": "821d8195f143f5b14742360190e0037f5004e38a",
+   "worktree": false
+  },
+  "xplor-contracts": {
+   "path": "C:/DEV/xplor-contracts",
+   "branch": "main",
+   "baseline": "4d43817b89e7a05427612feec85261e0493b0b09",
+   "worktree": false
+  },
+  "xplor-station": {
+   "path": "C:/DEV/xplor-station",
+   "branch": "main",
+   "baseline": "794172187401f97a007c5af869d5c516fcfd082c",
+   "worktree": false
+  }
+ },
+ "progress": {
+  "total": 4,
+  "done": 1,
+  "skipped": 0,
+  "escalated": 0,
+  "inProgress": 1,
+  "waiting": 0,
+  "pending": 2,
+  "current": "2",
+  "next": "3"
+ },
+ "agents": [
+  {
+   "role": "implementer",
+   "agent": "station-implementer-opus-5-5",
+   "step": "2",
+   "iteration": 1,
+   "mode": null,
+   "since": "2026-10-07T07:45:24+02:00"
+  }
+ ],
+ "finalGate": {
+  "status": "pending",
+  "runs": 0,
+  "agent": null,
+  "at": null
+ },
+ "journal": {
+  "status": "pending",
+  "path": null
+ },
+ "composites": [],
+ "steps": [
+  {
+   "id": "1",
+   "parent": null,
+   "tag": "contract",
+   "role": "station",
+   "kind": "agent",
+   "title": "Schéma du message de télémétrie",
+   "complexity": "complexe",
+   "repo": "xplor-contracts",
+   "status": "done",
+   "phase": null,
+   "attempt": 2,
+   "iteration": 1,
+   "doneBy": "verifier",
+   "finalVerdict": "pass",
+   "wait": null,
+   "note": null,
+   "files": [
+    "schemas/telemetry.schema.json",
+    "fixtures/telemetry-nominal.json"
+   ],
+   "startedAt": "2026-10-07T07:45:23+02:00",
+   "endedAt": "2026-10-07T07:45:24+02:00",
+   "iterations": [
+    {
+     "attempt": 1,
+     "n": 1,
+     "tier": "complexe",
+     "implementer": {
+      "agent": "station-implementer-opus-5-5",
+      "status": "launch-failed",
+      "startedAt": "2026-10-07T07:45:23+02:00",
+      "endedAt": "2026-10-07T07:45:23+02:00"
+     },
+     "verifier": null
+    },
+    {
+     "attempt": 2,
+     "n": 1,
+     "tier": "complexe",
+     "implementer": {
+      "agent": "station-implementer-opus-5-5",
+      "status": "success",
+      "startedAt": "2026-10-07T07:45:23+02:00",
+      "endedAt": "2026-10-07T07:45:23+02:00",
+      "tokens": 35500
+     },
+     "verifier": {
+      "agent": "verifier-opus-5-5",
+      "mode": "docs-config",
+      "verdict": "pass",
+      "recommendedAction": "merge",
+      "runs": 1,
+      "startedAt": "2026-10-07T07:45:24+02:00",
+      "endedAt": "2026-10-07T07:45:24+02:00",
+      "blocking": null,
+      "notes": null,
+      "tokens": 9000
+     }
+    }
+   ]
+  },
+  {
+   "id": "2",
+   "parent": null,
+   "tag": "station",
+   "role": "station",
+   "kind": "agent",
+   "title": "Publication par la passerelle",
+   "complexity": "standard",
+   "repo": "xplor-station",
+   "status": "in-progress",
+   "phase": "implementing",
+   "attempt": 1,
+   "iteration": 1,
+   "doneBy": null,
+   "finalVerdict": null,
+   "wait": null,
+   "note": null,
+   "files": [],
+   "startedAt": "2026-10-07T07:45:24+02:00",
+   "endedAt": null,
+   "iterations": [
+    {
+     "attempt": 1,
+     "n": 1,
+     "tier": "standard",
+     "implementer": {
+      "agent": "station-implementer-opus-5-5",
+      "status": null,
+      "startedAt": "2026-10-07T07:45:24+02:00",
+      "endedAt": null
+     },
+     "verifier": null
+    }
+   ]
+  },
+  {
+   "id": "3",
+   "parent": null,
+   "tag": "bord",
+   "role": null,
+   "kind": "manual",
+   "title": "Relevé d'horloge sur le banc",
+   "complexity": null,
+   "repo": "xplor-station",
+   "status": "pending",
+   "phase": null,
+   "attempt": 0,
+   "iteration": 0,
+   "doneBy": null,
+   "finalVerdict": null,
+   "wait": null,
+   "note": null,
+   "files": [],
+   "startedAt": null,
+   "endedAt": null,
+   "iterations": []
+  },
+  {
+   "id": "4",
+   "parent": null,
+   "tag": "backend",
+   "role": "backend",
+   "kind": "agent",
+   "title": "Ingestion côté pont MQTT",
+   "complexity": "standard",
+   "repo": "project",
+   "status": "pending",
+   "phase": null,
+   "attempt": 0,
+   "iteration": 0,
+   "doneBy": null,
+   "finalVerdict": null,
+   "wait": null,
+   "note": null,
+   "files": [],
+   "startedAt": null,
+   "endedAt": null,
+   "iterations": []
+  }
+ ]
+}

@@ -1,0 +1,56 @@
+{
+  "skill_name": "plan-history-artifact-writer",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Before we write any code, I need a plan for adding a CSV export button to our maritime missions dashboard. The button should sit in the mission sidebar and download every current contact (id, type, bearing, range, classification) as a .csv file. Plan it out properly first — don't touch the code yet.",
+      "expected_output": "A planning artifact is written to documentation/history/tasks/ with a YYYY-MM-DD_HH-mm_task_<slug>.md filename, classified as task, historyRelation new (no prior index exists). documentation/history/index.jsonl is created with one valid JSON line, and INDEX.md is created with one entry row. The artifact follows the 13-section template and is detailed enough to execute. No application code is modified.",
+      "files": [],
+      "expectations": [
+        "A Markdown artifact was created under documentation/history/tasks/",
+        "The artifact filename matches the pattern YYYY-MM-DD_HH-mm_task_<slug>.md",
+        "The artifact frontmatter has kind: task and historyRelation: new",
+        "documentation/history/index.jsonl was created and its single line is valid JSON with all 11 required fields",
+        "documentation/history/INDEX.md was created with a header and one entry row",
+        "The artifact states that no relevant prior planning history was found",
+        "The artifact contains a numbered step-by-step plan and a section 13 Execution handoff",
+        "No application/source code files were modified"
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "We've got a regression in the drone simulator: targets that were destroyed are respawning a few seconds later instead of staying dead. Work out a fix strategy and write it down before anyone edits the simulator.",
+      "expected_output": "A planning artifact is written to documentation/history/fixes/ (not tasks/), classified as fix, with a YYYY-MM-DD_HH-mm_fix_<slug>.md filename. index.jsonl is created with one valid JSON line where kind is fix, and INDEX.md is created with a matching row. The artifact contains a concrete fix strategy and a validation strategy. No simulator code is modified.",
+      "files": [],
+      "expectations": [
+        "A Markdown artifact was created under documentation/history/fixes/",
+        "The artifact filename matches the pattern YYYY-MM-DD_HH-mm_fix_<slug>.md",
+        "The artifact frontmatter has kind: fix",
+        "documentation/history/index.jsonl was created with one valid JSON line where kind is \"fix\"",
+        "documentation/history/INDEX.md was created with one entry row whose Kind column is fix",
+        "The artifact includes a validation strategy describing how to confirm the regression is resolved",
+        "No simulator or application source code files were modified"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "We already did the maritime sidebar rework. Now I want to plan a follow-up: add a collapsible 'contact filters' panel to that same sidebar so operators can filter contacts by classification and threat level. Plan this before any code is written.",
+      "expected_output": "The skill consults the existing index.jsonl, finds the related 'Maritime sidebar rework' entry, and classifies the new artifact's historyRelation as continuation. A new artifact is appended to tasks/ — the existing maritime-sidebar-rework artifact is NOT overwritten. Section 1 references the prior artifact. index.jsonl gains exactly one new line (4 total) and INDEX.md gains one new row, all prior entries preserved.",
+      "files": [
+        "evals/fixtures/eval-2-history/index.jsonl",
+        "evals/fixtures/eval-2-history/INDEX.md",
+        "evals/fixtures/eval-2-history/tasks/2026-05-12_09-15_task_maritime-sidebar-rework.md"
+      ],
+      "expectations": [
+        "The pre-existing documentation/history/index.jsonl was read before the new artifact was written",
+        "A new artifact was created under documentation/history/tasks/ with a fresh dated filename matching YYYY-MM-DD_HH-mm_task_<slug>.md, distinct from the existing maritime-sidebar-rework artifact",
+        "The existing 2026-05-12_09-15_task_maritime-sidebar-rework.md file was NOT overwritten or deleted",
+        "The new artifact's historyRelation is continuation, revision, or potential-conflict (not new)",
+        "Section 1 of the new artifact explicitly names the maritime-sidebar-rework prior artifact",
+        "documentation/history/index.jsonl now has exactly 4 lines, with the 3 original lines preserved unchanged and one new appended line",
+        "documentation/history/INDEX.md retains its 3 original rows and gains exactly one new row",
+        "No application source code files were modified"
+      ]
+    }
+  ]
+}
