@@ -36,7 +36,7 @@ Cet extrait complète les autres métadonnées requises par [run-tracker](../too
 
 ## 3. Installer les instructions
 
-Copier les quatre skills du cœur avec leurs `assets/` et `evals/`, les agents nécessaires et **`.claude/agents/references/implementation.md`**. Les variantes dépendent de leur agent de base. Conserver aussi [NOTICE](../NOTICE.md) et `third_party/ponytail/LICENSE` lors de la redistribution des adaptations de Ponytail.
+Copier les quatre skills du cœur avec leurs `assets/` et `evals/`, les agents nécessaires et **`.claude/agents/references/implementation.md`**. Les variantes dépendent de leur agent de base. Copier aussi **tout `third_party/ponytail/`**, [NOTICE](../NOTICE.md) et [le contrat d'intégration](PONYTAIL_INTEGRATION.md) : les deux sources officielles sont des dépendances obligatoires du chargement, pas une documentation facultative.
 
 Copier `tools/history/` et les conventions de `documentation/history/`, en gardant les index vides. Fusionner le routage dans le `CLAUDE.md` existant : nouveau besoin → `analyse-need`, planification → `plan-history-artifact-writer`, grand plan → `shard-plan`, exécution → `execute-plan`. Les autorisations déjà données par l'utilisateur continuent de s'appliquer.
 
@@ -46,6 +46,7 @@ Les fichiers d'agents utilisent le format Claude Code (`tools:`, `model:`, `effo
 
 ```powershell
 node --test tools/history/run-tracker.test.mjs
+node --test tools/ponytail/vendor.test.mjs
 ```
 
 Exécuter ensuite un petit plan réel avec une implémentation, une vérification, une décision et une clôture. Contrôler les permissions, les commandes et le journal. Les [évaluations d'agents](../evals/agents/README.md) sont des simulations de décisions, pas une campagne d'exécution sur toutes les stacks.

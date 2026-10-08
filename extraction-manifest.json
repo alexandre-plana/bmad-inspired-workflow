@@ -5,7 +5,7 @@
   "files": [
     {
       "path": ".claude/agents/README.md",
-      "sha256": "e83a69028bbf65d899181d1087f7fbf4840d9d6b915b16776fbfcedb1ff695a5",
+      "sha256": "83cf5e2b0588bc5b07a8f3958195a90f5bc760a9506bba9ea55b8647baba85dc",
       "sourceSha256": "7ea0382f0b8ab0d189d9baf390ab03f5f5df2b1e0e5ee07f149502145f786cc5"
     },
     {
@@ -45,7 +45,7 @@
     },
     {
       "path": ".claude/agents/backend-implementer.md",
-      "sha256": "42322297c45893903f70b87e61d8c4cdf48ecabd0800e7a9dffae02c50642101",
+      "sha256": "d9e43d68ec1b0fa3a4452161f17e0144189034ac3f2c29ab5fc1b2efbf3529c1",
       "sourceSha256": "eb75b57a6a8794882b4b852aeddd35717bcd4acb14c2804e8dd4b452d8af1e8f"
     },
     {
@@ -90,7 +90,7 @@
     },
     {
       "path": ".claude/agents/frontend-implementer.md",
-      "sha256": "7a168116131f7a04e617496e5178fb11369bc96741b9332d1ef41d6f5ffad9dc",
+      "sha256": "3552fb2945eb32e16ffd76830a0baf1af26a4b4abc21744d4a2cf6b1118f5f4e",
       "sourceSha256": "7a4c0295963acd56065edcc3431d90b5aa3233feb73b0b782fce89cec3164f14"
     },
     {
@@ -115,7 +115,7 @@
     },
     {
       "path": ".claude/agents/station-implementer.md",
-      "sha256": "2f4d54c81bc50e5e146105c5d6beedc546708376f3db661c120bdccf707175fc",
+      "sha256": "c326dcc05d2fc75ac758ecd2d0695cc163f135492aa5cf4d8e9e24ebadc4b566",
       "sourceSha256": "9fc0d8a0912400d7fb468b5c5e44786010c7b30a34f23da6f5753760a56d40b7"
     },
     {
@@ -145,7 +145,7 @@
     },
     {
       "path": ".claude/agents/verifier.md",
-      "sha256": "c8e3428c6dd89aacb25f65aea2338f259fe4b26c2878132e0384965e7c59a715",
+      "sha256": "08b80eb3758201a95fead6b6e80e064efc7a9b6cc43676dcd9ccd61ca3904cec",
       "sourceSha256": "e7f013777e04cf0cc2be1efd34b0f2003bf435c1adae621bae7d7ac9d85cb349"
     },
     {
@@ -160,7 +160,7 @@
     },
     {
       "path": ".claude/skills/execute-plan/SKILL.md",
-      "sha256": "9ac87f274f1ce4d34065f4e05dd7a3aa450f97e71926a4aa1cd2cb224362b0d6",
+      "sha256": "cc2952bc933cbf1774bc659a4a18988d72f31d9f8c7ee97063b4e25a1a42f0b8",
       "sourceSha256": "7d08debabbe332bf60da190a18de01006877f86b9e3938146da4efb2f025183e"
     },
     {
@@ -430,15 +430,15 @@
     }
   ],
   "adaptedAt": "2026-10-08",
-  "adaptation": "Neutralisation des noms du projet source ; agents et orchestration generiques ; regles communes d'implementation et revue adaptees de Ponytail 5.0.0 ; depots explicitement declares par etape.",
+  "adaptation": "Neutralisation des noms du projet source ; agents et orchestration generiques ; reutilisation directe des skills officiels Ponytail 5.0.0 inchanges, adaptateurs de workflow separes et import controle par SHA-256 et blobs Git.",
   "addedFiles": [
     {
       "path": ".claude/agents/references/implementation.md",
-      "sha256": "29b7a4f8019b615493b3f6fbe5be4c535cc4ba963e40351c96bfdb4d9ec86a74"
+      "sha256": "99c97e4ed190ea9076d9f49eba0a4f8d91cac069ceabe2a6b7ddafb466e114b8"
     },
     {
       "path": ".gitattributes",
-      "sha256": "67efae2667590809c826a3d47af10865e209ad15fb519c4485e15257eb5aa4f3"
+      "sha256": "1a4d6ef11641e1b3c589c43f4ad8b2f220a5296da628d13af1f5b8c0dfd3e648"
     },
     {
       "path": ".gitignore",
@@ -446,19 +446,23 @@
     },
     {
       "path": "NOTICE.md",
-      "sha256": "611c0a14fb610469beb22e5e40d5655a182b130121b26c5c2e5977d0c000f021"
+      "sha256": "2790592b0a2add8c2586982cf0a413e9920183ee5674f79bef198339ad89041a"
     },
     {
       "path": "README.md",
-      "sha256": "945b759a6bc424ce233824d3393c38b5ef7f94836b32a67db7ad0dec8f661296"
+      "sha256": "635ec81a75d85bbb105cfe19ca40cfeddf431bf71f5e7096e8cd1f30caa0933a"
+    },
+    {
+      "path": "docs/PONYTAIL_INTEGRATION.md",
+      "sha256": "b1051f5124c3b560130525fa2e2ca91ba7c9ada9a8ad0e820da9f0104e5f9dc6"
     },
     {
       "path": "docs/PORTAGE.md",
-      "sha256": "cf288646329468c27d0621bed676ef61cfc2ed6a98d7e2aa9676d2c08c6dce4c"
+      "sha256": "72462f2ee210e779c880bb17789a115ce784af5af3837f7860bec2b401dd8f39"
     },
     {
       "path": "docs/PROVENANCE.md",
-      "sha256": "f4ff7cd4b0f31925061647a918dd2bbe8de58e704e0aa5308a294b60ff065ebf"
+      "sha256": "ec59e82e8ae51f7a5536626db3dd5d821f008f56e47f98f7e7ea0a719704c29e"
     },
     {
       "path": "documentation/history/INDEX.md",
@@ -490,11 +494,31 @@
     },
     {
       "path": "evals/agents/README.md",
-      "sha256": "8c0c49a77aea2f2b1f2232a91ef5ad3723b41574518ee712e3a80f8693f34073"
+      "sha256": "bcf7189341d967dce119d9d0f36ee19a787e8f15244789caa6bfe601de4c8929"
     },
     {
       "path": "third_party/ponytail/LICENSE",
       "sha256": "fb1bc6909ac3ef82d5c22106e32ef682b0cff66788fa915fb9b53b15c9d2f3ab"
+    },
+    {
+      "path": "third_party/ponytail/README.md",
+      "sha256": "1248519a7da35544ed1cbfee59970dd1a78781bb841fc7a3290a2cbaa72c8ca8"
+    },
+    {
+      "path": "third_party/ponytail/skills/ponytail-review/SKILL.md",
+      "sha256": "07031103f04ff530f66259ca9d825c0ecd185c92dceedbdd7e91109ae0f01393"
+    },
+    {
+      "path": "third_party/ponytail/skills/ponytail/SKILL.md",
+      "sha256": "94c3fbb95ad4ac041ff6ff007d05af13b8e508dbc6950f38fcd1cc364fa3dc2a"
+    },
+    {
+      "path": "third_party/ponytail/upstream-lock.json",
+      "sha256": "cd16aa33cbb02a6f1ac4819acf664897b11a067140ffe2637c987565922efbe0"
+    },
+    {
+      "path": "tools/ponytail/vendor.test.mjs",
+      "sha256": "f8e526cab85f01d12d7c7b5abcf3ff0cd57d082a16b2ff5107daaeaa73759ff1"
     }
   ]
 }

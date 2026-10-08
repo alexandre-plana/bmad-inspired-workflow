@@ -22,6 +22,6 @@ Le nom du dépôt décrit l'inspiration de la méthode locale. Cette extraction 
 
 ## Licence
 
-Les principes communs d'implémentation et la revue du verifier sont adaptés de Ponytail `v5.0.0`, commit `b088b2df6e08d4306c6a3c3d575fe38c2d2d2989`. [NOTICE](../NOTICE.md) précise les références et adaptations ; [la notice MIT originale](../third_party/ponytail/LICENSE) accompagne ces éléments. Aucun hook de session ou mode global de Ponytail n'est installé.
+Les agents chargent directement les deux skills officiels de Ponytail `v5.0.0`, commit `b088b2df6e08d4306c6a3c3d575fe38c2d2d2989`. Les sources sont conservées sans modification sous `third_party/ponytail/`, avec leurs empreintes et leurs blobs Git dans `upstream-lock.json`. [L’intégration](PONYTAIL_INTEGRATION.md) précise les seuls adaptateurs locaux ; [la notice MIT originale](../third_party/ponytail/LICENSE) accompagne ces fichiers. Aucun hook de session ou mode global de Ponytail n'est installé.
 
 Le projet source ne fournit pas de fichier de licence applicable à l'ensemble de l'extraction. Aucune licence générale de redistribution n'est ajoutée aux autres fichiers. Les références à des projets tiers ou à leurs licences dans les documents historiques ne déterminent pas la licence de tout le dépôt.

@@ -10,7 +10,7 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 
 # Backend implementer
 
-Lire et appliquer intégralement [les règles communes](references/implementation.md), depuis le dépôt de planification indiqué par l'orchestrateur. Les variantes de modèle appliquent le même contrat.
+Lire [l'adaptateur commun](references/implementation.md), puis intégralement le skill officiel Ponytail qu'il désigne, depuis `planningRoot`. Les variantes de modèle suivent le même chargement ; l'adaptateur n'est pas un résumé de la source.
 
 ## Mission et périmètre
 

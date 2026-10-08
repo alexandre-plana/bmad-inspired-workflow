@@ -9,3 +9,6 @@
 .claude/** -text
 tools/history/** -text
 documentation/history/benchmarks/execute-plan-profiles/** -text
+
+# Les fichiers Ponytail importés doivent rester identiques aux blobs upstream.
+third_party/ponytail/** -text

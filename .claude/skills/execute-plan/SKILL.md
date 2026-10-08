@@ -50,7 +50,11 @@ Exemples acceptés :
    stockés en mémoire d'exécution).
 4. Les subagents de base `backend-implementer`, `frontend-implementer`,
    `verifier`, `documenter` existent sous `.claude/agents/`, avec les règles
-   communes sous `agents/references/`. Pour une étape `[station]`, `[bord]`
+   d'interface sous `agents/references/` et les deux sources officielles
+   `third_party/ponytail/skills/ponytail/SKILL.md` et
+   `third_party/ponytail/skills/ponytail-review/SKILL.md`. Une source manquante
+   bloque le dispatch ; aucune reformulation locale ne la remplace.
+   Pour une étape `[station]`, `[bord]`
    logicielle ou `[contract]`, `station-implementer` doit exister aussi.
    Chaque checkout et périmètre d'écriture est explicitement résolu depuis
    le plan ; aucune cible ne dépend d'un nom de dépôt ou d'un chemin machine.
@@ -653,22 +657,19 @@ L'UI ajoute Fidélité maquette (référence et écarts, ou n/a).
 Le rapport conserve `mode: docs-config | step | final`,
 `verdict: pass | pass-with-notes | fail`,
 `recommendedAction: merge | fix-and-reverify | escalate-to-user`,
-Checks lancés, Items bloquants et Items non-bloquants. Le détail et les Limites
-de vérification sont définis dans
-[le contrat du vérificateur](../../agents/verifier.md#rapport-obligatoire).
-Chaque finding porte le cas concret, sa conséquence et le correctif minimal.
+Checks lancés, Items bloquants et Items non-bloquants. Il inclut la revue
+Ponytail complète, ses catégories source et ses numéros, puis leur traduction
+vers le suivi. Le détail et les limites sont définis dans
+[l'adaptateur du vérificateur](../../agents/verifier.md#rapport-vers-lorchestrateur).
 Les checks dépendent du projet ; l'absence d'un contrôle requis reste visible.
 
 ## Critères bloquant vs non-bloquant
 
-Appliquer la grille de gravité de
-[`verifier.md`](../../agents/verifier.md#gravité-et-verdict), pour tous les
-modes et rôles. Un bug démontré, un appelant cassé, un défaut de sécurité ou de
-données, un échec à la charge attendue, une règle obligatoire violée ou un
-contrôle requis rouge/impossible est bloquant. Une amélioration démontrée de
-simplicité, de tests ou de performance peut être non bloquante si les critères
-sont satisfaits. Les préférences personnelles de nommage/style ne sont pas
-publiées comme constats. Aucune grille métier parallèle n'est embarquée ici.
+Appliquer la revue de `ponytail-review` officiel, puis
+[la traduction du verdict](../../agents/verifier.md#revue-source-puis-traduction-du-verdict).
+Ne pas classer les constats depuis une grille parallèle dans l'orchestrateur.
+Les défauts des contrôles et critères obligatoires du workflow restent
+bloquants, avec leur justification distincte du rapport upstream.
 
 ## Politique de troncature du contexte transmis
 

@@ -12,7 +12,7 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 
 Le nom `station-implementer` est conservé pour le routage des plans existants ; il désigne un rôle logiciel d'intégration, sans domaine matériel imposé.
 
-Lire et appliquer intégralement [les règles communes](references/implementation.md) depuis le dépôt de planification indiqué par l'orchestrateur, même si ton checkout d'exécution est ailleurs.
+Lire [l'adaptateur commun](references/implementation.md), puis intégralement le skill officiel Ponytail qu'il désigne, depuis `planningRoot`, même si ton checkout d'exécution est ailleurs. Les variantes suivent le même chargement.
 
 ## Mission et périmètre
 

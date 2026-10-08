@@ -1,12 +1,13 @@
-# Attribution des adaptations Ponytail
+# Attribution de Ponytail
 
-Les règles communes d'implémentation sous `.claude/agents/references/implementation.md` et la méthode de revue sous `.claude/agents/verifier.md` sont inspirées et adaptées de Ponytail 5.0.0, de DietrichGebert.
+Les fichiers officiels `skills/ponytail/SKILL.md`, `skills/ponytail-review/SKILL.md` et `LICENSE` de Ponytail 5.0.0, de DietrichGebert, sont conservés sans modification sous `third_party/ponytail/`. Les agents chargent ces sources directement ; leurs adaptateurs locaux gèrent uniquement l'interface avec le workflow.
 
 - Source : [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail/tree/v5.0.0).
 - Version : `v5.0.0`, commit `b088b2df6e08d4306c6a3c3d575fe38c2d2d2989`.
-- Références : `skills/ponytail/SKILL.md` et `skills/ponytail-review/SKILL.md`.
+- Copies : [ponytail](third_party/ponytail/skills/ponytail/SKILL.md) et [ponytail-review](third_party/ponytail/skills/ponytail-review/SKILL.md).
+- Version et empreintes : [upstream-lock.json](third_party/ponytail/upstream-lock.json).
 - Notice MIT d'origine : [third_party/ponytail/LICENSE](third_party/ponytail/LICENSE).
 
-Adaptations : français, périmètres d'exécution déclarés, commandes propres au projet, rapports structurés, vérification indépendante et politique de convergence du workflow. Les hooks de session, les modes globaux et les autres commandes Ponytail ne sont pas installés par cette adaptation.
+Les différences d'interface sont explicites dans [PONYTAIL_INTEGRATION.md](docs/PONYTAIL_INTEGRATION.md) : contexte d'invocation, autorisations, langue des rapports, champs du suivi et contrôles indépendants. Les hooks et le plugin complet ne sont pas installés.
 
-La notice MIT couvre les éléments adaptés de Ponytail ; elle n'attribue pas une nouvelle licence à l'ensemble du workflow extrait.
+La notice MIT accompagne les fichiers de Ponytail ; elle n'attribue pas une nouvelle licence à l'ensemble du workflow extrait.
