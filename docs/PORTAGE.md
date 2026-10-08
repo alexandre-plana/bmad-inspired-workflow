@@ -36,11 +36,21 @@ Cet extrait complète les autres métadonnées requises par [run-tracker](../too
 
 ## 3. Installer les instructions
 
-Copier les quatre skills du cœur avec leurs `assets/` et `evals/`, les agents nécessaires et **`.claude/agents/references/implementation.md`**. Les variantes dépendent de leur agent de base. Copier aussi **tout `third_party/ponytail/`**, [NOTICE](../NOTICE.md) et [le contrat d'intégration](PONYTAIL_INTEGRATION.md) : les deux sources officielles sont des dépendances obligatoires du chargement, pas une documentation facultative.
+Copier les quatre skills du cœur et `ponytail-tools` avec leurs sous-dossiers, les agents nécessaires et **`.claude/agents/references/implementation.md`**. Les variantes dépendent de leur agent de base. Copier aussi **tout `third_party/ponytail/`**, [NOTICE](../NOTICE.md) et [le contrat d'intégration](PONYTAIL_INTEGRATION.md) : les sources officielles sont des dépendances de chargement. La distribution entière reste sous ce dossier, sans copier ses règles, manifests ou hooks à la racine du projet cible.
 
-Copier `tools/history/` et les conventions de `documentation/history/`, en gardant les index vides. Fusionner le routage dans le `CLAUDE.md` existant : nouveau besoin → `analyse-need`, planification → `plan-history-artifact-writer`, grand plan → `shard-plan`, exécution → `execute-plan`. Les autorisations déjà données par l'utilisateur continuent de s'appliquer.
+Copier `tools/history/` et les conventions de `documentation/history/`, en gardant les index vides. Fusionner le routage dans le `CLAUDE.md` existant : nouveau besoin → `analyse-need`, planification → `plan-history-artifact-writer`, audit conditionnel après cadrage et dette de clôture → `ponytail-tools`, grand plan → `shard-plan`, exécution → `execute-plan`. Les demandes autonomes d’audit, de dette, d’aide ou de benchmarks passent directement par `ponytail-tools`. Les autorisations déjà données par l'utilisateur continuent de s'appliquer.
 
 Les fichiers d'agents utilisent le format Claude Code (`tools:`, `model:`, `effort:`). Un autre moteur doit traduire ce format et les appels d'agents. Commencer par `--profile=herite` ; les profils épinglés exigent des modèles disponibles. Les benchmarks et scripts `*.workflow.js` conservés dépendent de leur environnement historique.
+
+### Hooks optionnels
+
+La lecture des skills fonctionne sans installer le plugin dans l’hôte. Pour
+une installation explicite avec hooks, consulter le
+[INSTALL officiel de la version embarquée](../third_party/ponytail/INSTALL.md)
+et [notre contrat d’intégration](PONYTAIL_INTEGRATION.md#hooks-optionnels).
+Les réglages d’activation et le filtrage des sous-agents sont distincts du
+routage de notre workflow. Conserver la version épinglée et vérifier les
+adaptateurs avant toute mise à jour.
 
 ## 4. Vérifier le portage
 

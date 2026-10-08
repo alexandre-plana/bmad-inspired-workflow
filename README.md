@@ -2,14 +2,18 @@
 
 Workflow de développement assisté par IA : du besoin au plan exécutable, puis à l'implémentation vérifiée et au journal d'exécution.
 
-Le dépôt rassemble les instructions pour permettre leur réutilisation et leur évolution indépendamment d'une application. Les agents utilisent la stack, les chemins et les règles du projet cible. Ils chargent directement les deux skills officiels de Ponytail 5.0.0, conservés sans modification ; voir [les agents](.claude/agents/README.md), [l'attribution](NOTICE.md) et [le guide de portage](docs/PORTAGE.md). Le code applicatif, les conversations et l'historique métier ne sont pas embarqués.
+Le dépôt rassemble les instructions pour permettre leur réutilisation et leur évolution indépendamment d'une application. Les agents utilisent la stack, les chemins et les règles du projet cible. Ils chargent directement les skills officiels de Ponytail 5.0.0 selon leur rôle. La distribution complète est embarquée sans modification ; voir [les agents](.claude/agents/README.md), [l'attribution](NOTICE.md) et [le guide de portage](docs/PORTAGE.md). Le code applicatif, les conversations et l’historique métier du projet d’origine ne sont pas embarqués.
 
 ## Le parcours
 
 ```mermaid
 flowchart TD
     A[Besoin utilisateur] --> B[analyse-need : brief]
-    B --> C[plan-history-artifact-writer : plan et index]
+    B --> Q{Audit technique nécessaire ?}
+    Q -->|Oui| U[ponytail-audit : périmètre concerné]
+    Q -->|Non| C[plan-history-artifact-writer : plan et index]
+    U -->|Constats compatibles avec le besoin| C
+    U -->|Cadrage remis en cause| B
     C --> D{Plan volumineux ?}
     D -->|Oui| E[shard-plan : sections et étapes séparées]
     D -->|Non| F[execute-plan : orchestration]
@@ -21,7 +25,9 @@ flowchart TD
     H -->|Étape validée| J{Étapes restantes ?}
     J -->|Oui| G
     J -->|Non| K[verifier : contrôle final]
-    K --> L[documenter : journal unique]
+    K -->|Validé ou clôture escaladée arbitrée| N[ponytail-debt : checkouts concernés]
+    N --> L[documenter : journal unique avec bilan]
+    N -->|Critère requis menacé| K
     F -. Transitions .-> M[run-tracker : événements et état reprenable]
 ```
 
@@ -33,6 +39,7 @@ Une étape de décision ou un geste matériel passe par l'utilisateur. L'orchest
 |---|---|
 | [analyse-need](.claude/skills/analyse-need/SKILL.md) | Clarifier un besoin et conserver un brief avant la planification |
 | [plan-history-artifact-writer](.claude/skills/plan-history-artifact-writer/SKILL.md) | Produire un plan autonome, consulter l'historique, tenir les index |
+| [ponytail-tools](.claude/skills/ponytail-tools/SKILL.md) | Charger audit/debt au bon moment et help/gain à la demande, depuis les sources originales |
 | [shard-plan](.claude/skills/shard-plan/SKILL.md) | Découper un grand plan et permettre sa lecture incrémentale |
 | [execute-plan](.claude/skills/execute-plan/SKILL.md) | Router les étapes, piloter les corrections, vérifier et clôturer |
 | [Équipe d'agents](.claude/agents/README.md) | Implémenteurs backend, frontend et intégration ; vérificateur et documentaliste ; variantes de modèle/effort |
@@ -41,6 +48,8 @@ Une étape de décision ou un geste matériel passe par l'utilisateur. L'orchest
 | [Suivi d'exécution](tools/history/README.md) | CLI Node sans dépendance, journal JSONL et instantané JSON, interruptions et reprises |
 | [screen-composition](.claude/skills/screen-composition/README.md) | Compagnon facultatif de composition fonctionnelle des interfaces |
 | [Benchmarks](documentation/history/benchmarks/execute-plan-profiles/README.md) | Protocoles, oracles et résultats historiques ayant guidé les profils d'agents |
+
+`analyse-need` conserve le dialogue et le brief. L'audit est conditionnel et limité au périmètre utile ; ses constats ne deviennent pas automatiquement des travaux. La dette est inventoriée après les vérifications pour les checkouts où du code, des tests ou une configuration exécutable ont été modifiés ; un parcours purement statique indique sa non-applicabilité. Zéro marqueur trouvé ne signifie pas zéro dette technique. Les hooks upstream restent disponibles comme option d'installation explicite.
 
 Les templates et scénarios d'évaluation des skills sont conservés. Les exemples du suivi sont des fixtures de démonstration, pas les états d'exécution privés du projet.
 
@@ -60,7 +69,7 @@ Le CLI suit une exécution ; il ne lance pas lui-même les agents. Les skills et
 ## Installer dans un projet
 
 1. Lire [le guide de portage](docs/PORTAGE.md) et choisir les rôles, chemins, règles de domaine et commandes de validation du projet cible.
-2. Copier les quatre skills du cœur dans son `.claude/skills/` et les agents nécessaires dans `.claude/agents/`, avec `references/implementation.md`. Conserver les sous-dossiers `assets/` et `evals/` des skills, ainsi que `NOTICE.md`, `docs/PONYTAIL_INTEGRATION.md` et **tout `third_party/ponytail/`**, qui contient les sources obligatoires.
+2. Copier les quatre skills du cœur et l’adaptateur `ponytail-tools` dans son `.claude/skills/` et les agents nécessaires dans `.claude/agents/`, avec `references/implementation.md`. Conserver les sous-dossiers `assets/` et `evals/` des skills, ainsi que `NOTICE.md`, `docs/PONYTAIL_INTEGRATION.md` et **tout `third_party/ponytail/`**, qui contient les sources originales, les six skills et les fichiers du plugin. Les manifests et hooks y restent isolés tant que leur installation n’est pas demandée.
 3. Copier `tools/history/` au même emplacement et les conventions de `documentation/history/` ; commencer avec des index vides.
 4. Fournir les périmètres, critères et commandes du projet. Fusionner les consignes de routage dans son `CLAUDE.md` existant.
 5. Vérifier les tests du CLI, puis exécuter un petit plan réel pour vérifier le routage, les permissions et les contrôles du projet.
@@ -69,6 +78,9 @@ Exemples de demandes à l'assistant après adaptation :
 
 - « Analyse le besoin d'un centre de notifications et écris un brief. »
 - « Rédige un plan exécutable à partir de ce brief. »
+- « Audite ce package avant de préparer le plan. »
+- « Liste les compromis Ponytail de ce dépôt. »
+- « Affiche l’aide ou les benchmarks publiés de Ponytail. »
 - « Découpe ce plan pour une lecture par étapes. »
 - « Exécute ce plan avec le profil hérité. »
 - « Reprends l'exécution interrompue de ce plan. »
@@ -77,9 +89,9 @@ Exemples de demandes à l'assistant après adaptation :
 
 Extraction du 8 octobre 2026, à partir du commit source `d4dbafc86606a976eec3e195b244c91b101cc365`. Les noms du projet d'origine ont été neutralisés. La liste des 85 fichiers extraits, leurs empreintes SHA-256 d'origine (`sourceSha256`) et leurs empreintes actuelles (`sha256`) figurent dans [extraction-manifest.json](extraction-manifest.json).
 
-Les 20 tests automatisés du suivi d’exécution et les deux tests d’intégrité de l’import Ponytail passent. Les empreintes SHA-256 et les blobs Git garantissent la fidélité des fichiers importés. Cinq [scénarios d'agents](evals/agents/README.md) évaluent les décisions attendues des contrats génériques par simulation en lecture seule. Les campagnes de benchmarks historiques ne sont pas rejouées ; leurs tarifs et noms de modèles sont des données historiques, à vérifier avant utilisation.
+Les contrôles automatisés couvrent le suivi d’exécution et l’intégrité de l’import complet de Ponytail : arbre Git, modes, SHA-256 et blobs des 199 fichiers officiels. Les [scénarios d’agents](evals/agents/README.md) évaluent séparément les contrats génériques et le parcours besoin/audit/dette par simulation en lecture seule. Les campagnes de benchmarks historiques ne sont pas rejouées ; leurs tarifs et noms de modèles sont des données historiques, à vérifier avant utilisation.
 
-Certaines évolutions envisagées, notamment le tableau des chantiers et la clôture enrichie, ne sont pas implémentées dans ce snapshot. Le [contrat du suivi](tools/history/README.md#9-compatibilité-et-suites) précise cette limite.
+Certaines évolutions envisagées, notamment le tableau des chantiers, ne sont pas implémentées dans ce snapshot. Le [contrat du suivi](tools/history/README.md#9-compatibilité-et-suites) précise cette limite.
 
 ## Origine
 

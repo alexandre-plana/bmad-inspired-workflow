@@ -86,6 +86,13 @@ Plan source : [<slug>](<chemin relatif vers le plan>)
 - **Notes verifier** : <résumé des items non-bloquants si présents>
 - **Décisions utilisateur** : <obligatoire si étape [decision] ou si escalade>
 
+### Bilan de dette Ponytail
+- **Couverture** : <checkouts scannés, périmètre et limites ; ou not-applicable avec raison>.
+- **Résultat par checkout** : <rapport original ponytail-debt transmis par l'orchestrateur>.
+- **Sources tierces** : <marqueurs upstream distingués des compromis du projet, si présents>.
+- **Non vérifié** : <not-checked avec cause, s'il y en a>.
+- **Suites à arbitrer** : <marqueurs no-trigger, limites à revoir ; aucune correction implicite>.
+
 ### Clôture
 - **Étapes réussies** : N
 - **Étapes escaladées** : N
@@ -104,6 +111,14 @@ te transmet, en bloc :
 - **Résumés d'étapes** : pour chaque étape traitée, dans l'ordre — numéro, tag
   `[role]`, titre court, nombre d'itérations, verdict final, fichiers touchés,
   notes verifier éventuelles, et le texte intégral des décisions `[decision]`.
+- **Bilan de dette** : rapport original par checkout, racines/périmètres,
+  provenance des marqueurs tiers et limites, ou `not-applicable` avec raison.
+  Le recopier fidèlement dans « Bilan de dette Ponytail ». Ne pas relancer
+  l'audit ou le scan, inventer des marqueurs ou actualiser un registre séparé.
+  Zéro marqueur n'atteste pas zéro dette technique. Si cette entrée manque,
+  écrire `not-checked — bilan non transmis`, jamais « aucune dette ».
+  Ce bilan est une entrée de clôture hors schéma du tracker : l'absence de
+  champ debt dans l'instantané ne contredit pas le rapport transmis.
 - **Récap de clôture** : comptages (réussies / escaladées / skippées),
   timestamp de fin, suggestion de message de commit.
 - **Suivi d'exécution** (si l'exécution en a un) : le `runId` et le chemin de
@@ -135,7 +150,7 @@ Procédure :
 3. Écrire le fichier **complet en une seule passe** (Write) : frontmatter +
    sections « Contexte », « Journal » (Étape 0 + une section `### Étape <n>`
    par étape transmise, dans l'ordre, décisions incluses) + section
-   `### Clôture`.
+   `### Bilan de dette Ponytail` + section `### Clôture`.
 4. Renseigner le frontmatter avec son état final : `status: completed |
    escalated | aborted`, `startedAt`, `endedAt`. Pas d'état `running` — le
    journal n'existe qu'une fois l'exécution terminée ; l'avancement en cours

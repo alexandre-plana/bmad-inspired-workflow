@@ -122,9 +122,15 @@ d. Si aucun → erreur, refus de lancer.
   specialist, pas en bloc en Phase 1.
 
 **Lien vers le brief** : si le frontmatter du plan contient un champ
-`relatedBrief:`, lire le brief référencé. Si son `status: obsolete`,
-**prévenir l'utilisateur** (warning, **pas un blocage** — l'exécution
-continue).
+`relatedBrief:`, lire le brief référencé. S'il est absent ou illisible,
+signaler le chemin et résoudre cette entrée avant le dispatch. S'il porte
+`status: draft` ou `obsolete`, ou si un audit a remis en cause son objectif,
+sa contrainte critique ou son périmètre, faire arbitrer le cadrage avant
+l'exécution. Une autorisation utilisateur déjà explicite d'exécuter ce plan
+malgré ce statut ou cette divergence reste valable ; la consigner sans
+modifier artificiellement le statut du brief. Sinon, revenir à `analyse-need`
+pour réviser/valider le besoin. Ne pas redemander de validation d'un brief
+validé, pertinent et couvert par l'autorisation existante.
 
 ### Phase 1 — Préparation
 
@@ -364,6 +370,9 @@ Pour chaque étape dans l'ordre :
 
 ### Phase 3 — Clôture
 
+Le bilan de dette se place après le gate final applicable et avant le journal.
+Il est informatif : il ne remplace ni la vérification ni l'arbitrage du besoin.
+
 1. **Gate final** — si au moins une étape a touché du code, si un contrôle
    a été différé, ou si le plan exige une validation finale même statique, invoquer le verifier du profil (`herite` → `verifier` ;
    `opus-*` → `verifier-<profil>`, sauf `opus-5-5-medium` → `verifier-opus-5-5` ; `sonnet-5-5` et `auto` → `verifier-opus-5-5` ; `sonnet` → `verifier-opus-5`) une dernière fois en
@@ -383,14 +392,38 @@ Pour chaque étape dans l'ordre :
    Le gate final se publie comme un agent sans étape : `launch --role verifier
    --agent <subagent_type> --mode final`, puis `report --mode final --verdict
    <verdict>` (un `fail` met le run en attente utilisateur).
-2. Invoquer le `documenter` **une seule fois** (mode `write-full`) en lui
+2. **Bilan de dette** — si au moins une étape a modifié du code, des
+   tests ou une configuration exécutable, lire
+   [`ponytail-tools`](../ponytail-tools/SKILL.md) puis la source originale
+   `third_party/ponytail/skills/ponytail-debt/SKILL.md` depuis `planningRoot`.
+   Scanner en lecture seule chaque checkout concerné, d'après les fichiers
+   touchés rapportés par toutes les itérations, y compris celles avant une
+   reprise. Aucun autre dépôt déclaré dans `repos` n'est scanné implicitement.
+   Transmettre au documenter un bilan distinct par checkout : racine,
+   couverture, rapport original, marqueurs tiers identifiés et non-vérifié.
+   Pour un plan strictement docs/config statique : `not-applicable` et raison,
+   sauf demande explicite de dette. Pour un checkout illisible : `not-checked`
+   et cause ; zéro marqueur ne signifie jamais zéro dette technique.
+   Une source absente bloque cette action, sans résumé de remplacement ;
+   signaler le bilan incomplet. Si le plan exige ce bilan comme contrôle,
+   résoudre son impossibilité avant une clôture `completed`, ou obtenir un
+   arbitrage explicite. Sinon, conserver cette limite dans le journal.
+   Les marqueurs `no-trigger` restent des suites à arbitrer. Une limite
+   dépassée menaçant un critère requis revient au verifier avant clôture ;
+   aucune correction hors plan n'est déclenchée automatiquement.
+   Ce bilan ne crée pas de rôle, verdict ou champ supplémentaire dans le
+   tracker. Après interruption avant le journal, le refaire sur l'état courant.
+3. Invoquer le `documenter` **une seule fois** (mode `write-full`) en lui
      transmettant : les métadonnées d'init conservées en Phase 1 (timestamp de
      démarrage, chemin/slug/titre du plan, **profil d'exécution**, isolation,
      sync Gitea, étapes inférées), **tous** les résumés d'étapes accumulés en
      mémoire d'exécution
      (dans l'ordre, décisions `[decision]` incluses), et le récap de clôture
      (étapes réussies / escaladées / skippées, timestamp de fin, suggestion de
-     commit). Le `documenter` écrit le fichier journal complet d'un coup.
+     commit), ainsi que le bilan de dette de Phase 3, étape 2 (ou sa raison de
+     non-applicabilité et toute limite). Le `documenter` écrit le fichier
+     journal complet d'un coup, bilan inclus ; pas de fichier de dette séparé
+     sans autorisation de persistance déjà donnée.
      Lui transmettre aussi le **`runId`** et le chemin de l'instantané
      `documentation/history/executions/.etat/<runId>.state.json` : le journal
      se nomme `<runId>.md`, et l'instantané fait foi en cas d'écart avec les
@@ -399,15 +432,16 @@ Pour chaque étape dans l'ordre :
      retour, puis **clore le run** : `close --outcome completed | escalated |
      aborted`. Une clôture `completed` est refusée tant qu'une étape n'est ni
      faite, ni ignorée, ni escaladée.
-3. Demander à l'utilisateur s'il veut basculer le `status` du plan à `done`.
+4. Demander à l'utilisateur s'il veut basculer le `status` du plan à `done`.
    S'il confirme : éditer le frontmatter, puis `plan-status --to done`. S'il
    refuse : `plan-status --done-declined`. La clôture du run ne vaut jamais
    passage à `done`.
-4. Si `kind: fix` et que le plan tient en une étape avec succès au premier
+5. Si `kind: fix` et que le plan tient en une étape avec succès au premier
    essai, garder un journal bref contenant les mêmes faits et contrôles.
    Le journal est toujours écrit une seule fois à la clôture.
-5. Produire un récap dans la conversation : liste des étapes, verdict de
-   chacune, résultat du gate final, chemin du journal d'exécution, suggestion
+6. Produire un récap dans la conversation : liste des étapes, verdict de
+   chacune, résultat du gate final, bilan de dette et sa couverture,
+   chemin du journal d'exécution, suggestion
    de commande de commit (ne **jamais** committer automatiquement).
 
 ## Profils d'exécution (modèle / effort)

@@ -142,7 +142,21 @@ Statut initial : `draft`. Le passage à `validated` se fait quand
 l'utilisateur a explicitement validé le contenu — ne pas y aller
 unilatéralement.
 
-### Étape 5 — Proposer l'enchaînement vers le writer
+### Étape 5 — Audit conditionnel puis enchaînement vers le writer
+
+Le dialogue et le brief restent l'entrée du nouveau besoin. Une inspection
+superficielle ne se transforme pas en audit approfondi pendant cette skill.
+Si l'utilisateur demande un audit, ou si une limite du code existant peut
+compromettre le besoin, utiliser ensuite
+[`ponytail-tools`](../ponytail-tools/SKILL.md), qui charge l'audit officiel
+sur le checkout et le périmètre concernés. Sinon, aller directement au writer.
+Un brief validé et toujours pertinent reste réutilisable sans nouvelle rafale.
+
+Les constats enrichissent le contexte du plan ; ils ne remplacent pas le
+brief et n'élargissent pas automatiquement le périmètre. Si l'audit invalide
+un objectif, une contrainte critique ou le périmètre, revenir au dialogue et
+faire valider le cadrage révisé avant l'exécution. Conserver le rapport d'audit
+séparé du brief, court, et ne pas y recopier tous ses constats.
 
 Une fois le brief écrit (statut `draft` ou `validated` selon l'accord
 utilisateur), **proposer** à l'utilisateur :

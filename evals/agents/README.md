@@ -41,6 +41,48 @@ Pour évaluer l'intégration directe :
 3. Simuler une revue de code risqué sans test. Conserver `Should fix`, les quatre parties du constat et le verdict source avant leur traduction. Un constat que le verdict source exige de corriger ne peut pas devenir une simple note.
 4. Reprendre A–E pour contrôler les permissions, l'UI, les consommateurs hors diff et les contrôles requis impossibles.
 
-Les deux tests sous `tools/ponytail/vendor.test.mjs` vérifient séparément la version épinglée, les SHA-256 et les identifiants de blobs Git des trois fichiers upstream. Ils échouaient avant l'import, puis passent avec les sources officielles.
+Lors de cette première reprise, les deux tests sous `tools/ponytail/vendor.test.mjs` vérifiaient séparément la version épinglée, les SHA-256 et les identifiants de blobs Git des trois fichiers upstream. Ils échouaient avant l'import, puis passent avec les sources officielles.
 
 Après l'import, l'évaluateur distinct a confirmé la chaîne de chargement, le blocage d'une source absente, le commentaire requis dans le scénario urgent et la conservation de `Should fix` avant traduction d'un verdict `fix 1 first` en blocage workflow. La relecture d'A–E n'a identifié aucune régression bloquante. Les réponses produites restent des simulations ; seuls les contrôles de fichiers et les suites automatisées ont réellement été exécutés.
+
+
+## Distribution complète et parcours besoin/audit/dette
+
+Baseline : HEAD `3ba1f16f4a103d54cfdfa84797553fd79aac1603`, puis réévaluation
+après ajout de `ponytail-tools` et adaptation de analyse-need, writer,
+execute-plan et documenter. Le même évaluateur distinct a lu les contrats et
+simulé leurs décisions ; aucun agent applicatif ni checkout de scénario n'a
+été exécuté. Les résultats portent sur les instructions, pas sur la qualité
+réelle d'une implémentation ou une économie de tokens.
+
+| Cas | Entrée et critères | Baseline | Après |
+|---|---|---|---|
+| F — Nouveau besoin et pression d'audit | Notifications nouvelles, demande d'audit complet : conserver dialogue/brief avant l'audit ; respecter la demande explicite de périmètre ; ne pas approfondir pendant l'inspection initiale | Partiel : besoin cadré, audit absent | Conforme au contrat |
+| G — Petit fix | Fix circonscrit sans demande d'audit : pas d'audit global automatique | Déjà couvert | Préservé |
+| H — Divergence et autorisation | Audit avec risque hors scope ; brief draft/obsolete : pas de correction implicite, arbitrage avant dispatch ; une instruction explicite déjà donnée malgré le statut/divergence reste valable et consignée | Partiel : permissions existantes, simple warning pour brief obsolete | Conforme au contrat |
+| I — Dette multi-checkouts après reprise | Code modifié dans A à une itération passée, tests dans B, C déclaré mais jamais touché ; interruption avant journal : scanner A/B sur état courant, pas C | Dette absente | Conforme au contrat |
+| J — Docs/config statiques | Plan entièrement statique : bilan not-applicable avec raison, sauf demande explicite | Absence de scan, sans règle conditionnelle | Conforme au contrat |
+| K — Marqueurs et provenance | Zéro marqueur trouvé n'atteste pas zéro dette ; identifier les marqueurs tiers sans les supprimer silencieusement du rapport original | Non défini | Conforme au contrat |
+| L — Source ou scan impossible | Source absente : action bloquée sans reconstruction ; checkout illisible : not-checked ; contrôle debt requis : résolution/arbitrage avant completed | Seulement les deux skills existants couverts | Conforme au contrat |
+| M — Aide et gain | Afficher les sources originales à la demande ; aucune installation, édition ou changement de mode ; benchmark upstream non présenté comme mesure locale | Sources absentes | Conforme au contrat |
+
+La relecture confirme la cohérence entre le scan en lecture seule et son
+inclusion dans le journal unique autorisé par le workflow. Un registre autonome
+reste soumis à une autorisation de persistance. Le bilan n'a pas de champ dans
+le tracker ; après interruption, il est recalculé, puis transmis au documenter.
+Une autorisation liée au statut d'un brief ne couvre pas automatiquement une
+nouvelle divergence découverte ensuite.
+
+L'exemple de marqueur dans `third_party/ponytail/hooks/ponytail-map.js` appartient
+à la source officielle, pas à notre implémentation. Le bilan doit en conserver
+la provenance. Les marqueurs `no-trigger` alimentent les suites à arbitrer ;
+une limite dépassée menaçant un critère requis retourne au verifier.
+
+Le contrôle d'import couvre maintenant les 199 fichiers : trois tests vérifient
+la version/commit, reconstruisent l'arbre Git officiel complet et comparent les
+SHA-256 et blobs de chaque source. Les deux nouveaux critères de complétude
+échouaient sur l'import partiel, puis passent sur la distribution complète.
+La suite locale comporte 23 tests (20 tracker, 3 intégrité), tous passés lors
+de cette validation. Les scripts officiels `check-rule-copies.js` et
+`check-versions.js` ont également passé. La suite des hooks de tous les hôtes et
+les benchmarks upstream n'ont pas été rejoués ; aucun hook n'a été installé.

@@ -292,6 +292,26 @@ quand même être généré, mais **prévenir explicitement l'utilisateur** dans
 rapport final que le plan a été produit à partir d'une analyse non validée, et
 recommander de relire le brief avant d'exécuter le plan.
 
+## Audit technique en entrée
+
+Après le cadrage du besoin, un audit conditionnel peut être fourni par
+[`ponytail-tools`](../ponytail-tools/SKILL.md), via le skill Ponytail original.
+S'il n'est pas nécessaire, conserver le parcours direct brief → plan ; ne pas
+lancer un audit global pour tout fix ou toute évolution.
+
+Lire le rapport, son checkout, sa couverture, sa charge supposée et ses limites.
+Le référencer dans le contexte du plan (chemin s'il a été autorisé à persister,
+sinon constats utiles numérotés et limites), sans prétendre avoir audité les
+zones non lues. Relier les étapes retenues au besoin et à ses critères.
+Les recommandations hors périmètre restent des suites possibles, jamais des
+étapes ajoutées automatiquement. Un `Must fix` hors scope est signalé avec sa
+conséquence et soumis à arbitrage ; sa gravité n'étend pas l'autorisation.
+
+Si le rapport contredit un objectif, une contrainte critique ou le périmètre
+du brief, revenir à `analyse-need` pour arbitrer et réviser le cadrage avant de
+publier un plan exécutable. Un brief `draft` ou `obsolete` n'est pas déclaré
+validé par la production du plan ou par un verdict d'audit.
+
 ## Composition d'écran en entrée
 
 Quand un plan porte une étape `[frontend]` qui **compose ou refond

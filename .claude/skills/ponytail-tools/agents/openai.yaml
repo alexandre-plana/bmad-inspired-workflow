@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ponytail : audit et dette"
+  short_description: "Charger les outils officiels selon le besoin du workflow"
+  default_prompt: "Utilise $ponytail-tools pour traiter cette demande avec le skill officiel adapté."
