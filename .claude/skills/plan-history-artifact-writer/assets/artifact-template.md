@@ -62,8 +62,8 @@ ou zones affectés quand ils sont connus.
 responsable, pour permettre l'exécution par la skill `execute-plan` (voir
 section « Tags de rôle » du skill `plan-history-artifact-writer`). Rôles
 canoniques : `backend`, `frontend`, `simulator`, `firmware`, `docs`, `infra`,
-`verify`, `decision` ; pour un plan multi-dépôts XPLOR : `station`, `bord`,
-`contract` (dépôts frères `xplor-station` et `xplor-contracts`). Tags composés autorisés (`[backend+frontend]`,
+`verify`, `decision` ; pour des étapes d'intégration : `station`, `bord`,
+`contract` (checkout et périmètre déclarés par chaque étape). Tags composés autorisés (`[backend+frontend]`,
 `[docs+infra]`) — l'orchestrateur les découpe en sous-étapes séquentielles.
 
 1. **[role]** <Étape — quoi, pourquoi, fichiers attendus>

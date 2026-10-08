@@ -298,8 +298,7 @@ Quand un plan porte une étape `[frontend]` qui **compose ou refond
 structurellement** un écran, un panneau, un drawer, un dialog ou une modale, la
 structure fonctionnelle se fixe **en amont** avec le skill
 [`screen-composition`](../screen-composition/SKILL.md), puis se matérialise
-sous l'autorité de [`frontend-ui-ux`](../frontend-ui-ux/SKILL.md) (routage
-dans `CLAUDE.md`). Flux habituel : brief → **composition** → **maquette**
+selon les règles UI et le système de design du projet cible, s'ils existent. Flux habituel : brief → **composition** → **maquette**
 (produite par l'utilisateur) → plan enrichi par la maquette. Sur une maquette
 déjà contractuelle, la composition n'arrive qu'après : elle explicite la
 logique de la maquette et couvre ses zones non spécifiées, sans la redessiner.
@@ -326,23 +325,19 @@ Canonical roles:
 
 | Tag | Specialist | Scope |
 |---|---|---|
-| `[backend]` | `backend-implementer` | `backend/`, `maritime-drone-simulator/`, `mqtt_test_server/`, `tools/` |
-| `[frontend]` | `frontend-implementer` | `frontend/` |
-| `[simulator]` | `backend-implementer` | `maritime-drone-simulator/` (alias plus précis de `[backend]`) |
-| `[firmware]` | (no specialist — manual) | `esp32c6_*/`, `raspberry-pi-*/` |
-| `[station]` | `station-implementer` | Dépôt frère `xplor-station` (`C:\DEV\xplor-station`) : passerelle, `syncd`, déploiement, banc, docs du dépôt |
-| `[bord]` | `station-implementer` pour le logiciel ; **manuel** pour tout geste matériel | Logiciel de bord dans `xplor-station` (`camera-buffer/`, `middleware/`) ; les gestes sur le banc (Pi, alimentation, câblage, horloge filmée, mesures) sont manuels, comme `[firmware]` |
-| `[contract]` | `station-implementer` | Dépôt frère `xplor-contracts` (`C:\DEV\xplor-contracts`) : schémas, fixtures, spécifications du contrat interne |
-| `[docs]` | `backend-implementer` (default) | Documentation, skills, artefacts |
-| `[infra]` | `backend-implementer` (default) | Scripts root, CI, configuration |
-| `[verify]` | `verifier` | Étape de vérification explicite |
-| `[decision]` | _none_ | Étape de décision utilisateur, l'orchestrateur s'arrête |
+| `[backend]`, `[simulator]`, `[docs]`, `[infra]` | `backend-implementer` | Checkout et chemins explicitement autorisés pour l'étape |
+| `[frontend]` | `frontend-implementer` | Interface et système de design du projet cible |
+| `[station]`, `[contract]`, `[bord]` logiciel | `station-implementer` | Intégration ou contrat dans un checkout déclaré |
+| `[firmware]`, `[bord]` matériel | aucun — manuel | Cible et accès précisés par le plan |
+| `[verify]` | `verifier` | Vérification indépendante explicite |
+| `[decision]` | aucun | Décision utilisateur |
 
-**Plans multi-dépôts** — `[station]`, `[bord]` et `[contract]` désignent des
-étapes exécutées **hors de ce dépôt**, dans les dépôts frères du programme XPLOR ;
-`[simulator]` désigne de même le dépôt externe `C:\DEV\maritime-drone-simulator`.
-Le plan reste unique et vit ici : un seul artefact couvre tous les dépôts, et
-chaque étape nomme le dépôt qu'elle touche.
+**Plans multi-dépôts** : le tag choisit un rôle, le plan choisit le dépôt.
+Chaque étape déclare sa cible, son périmètre autorisé et les commandes de
+validation propres à ce checkout. Aucun nom de dépôt ni chemin machine n'est
+implicite. Le plan reste dans son dépôt de planification. Les règles métier,
+langues, stacks et skills nécessaires proviennent du projet cible ; ne pas
+référencer une skill absente comme dépendance obligatoire.
 
 Composite tags (`[backend+frontend]`) are allowed for genuinely transverse work;
 the orchestrator splits them into sequential mono-role sub-steps at execution
@@ -364,7 +359,7 @@ Classer avec la grille d'`execute-plan`
 
 - **`complexe`** dès qu'un critère est vrai : architecture ou nouveau module
   structurant ; modèle de domaine, persistance ou migration de données ; contrat
-  entre composants (socket, MQTT, REST, contrat XPLOR) ; plusieurs sous-projets
+  entre composants (API, format partagé ou contrat entre composants) ; plusieurs sous-projets
   ou dépôts dans l'étape ; concurrence, temps réel, rejeu ou performance ;
   sécurité, autorité de contrôle ; spécification ambiguë ou écarts à arbitrer.
 - **`simple`** seulement si tout est vrai : spécification explicite sans choix

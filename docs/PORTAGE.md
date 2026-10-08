@@ -1,58 +1,59 @@
-# Porter le workflow IA dans un autre projet
+# Porter le workflow IA dans un projet
 
-Les fichiers sous `.claude/` sont issus d'un projet applicatif, avec des noms neutralisés. Cette extraction rend le workflow accessible ; elle conserve des conventions métier à adapter avant de l'exécuter ailleurs.
+Le parcours brief → plan → implémentation → vérification → journal est indépendant du domaine. Les agents ne fixent ni stack, ni norme sectorielle, ni chemins applicatifs. Le plan et les instructions du projet cible fournissent ces contraintes.
 
-## 1. Séparer méthode et règles du projet
+## 1. Fournir le contrat du projet
 
-Conserver le parcours brief → plan → étapes taggées → implémentation → revue → journal, les rapports structurés, la limite de trois itérations et la distinction entre état d'exécution et statut du plan.
+Déclarer le checkout d'exécution, les chemins autorisés, les critères d'acceptation, les instructions locales et les contrôles avec leur répertoire. Lire les manifests et la CI pour choisir les commandes : pytest/ruff pour un projet Python, cargo test pour un projet Rust, scripts du package pour un client web, par exemple. Aucun de ces exemples n'est obligatoire.
 
-Remplacer les références à `project-standards`, `project-architecture` et `frontend-ui-ux` par les règles réellement présentes dans le projet cible. Ces trois skills métier et leur documentation normative ne sont pas extraits : ils portent le domaine maritime et l'architecture de l'application.
+Les skills métier et outils supplémentaires ne sont chargés que s'ils existent et sont pertinents. Le compagnon `screen-composition` est facultatif et suit le système de design et les maquettes du projet.
 
-Les invariants WGS-84, MQTT, Socket.io, OpenBridge, OTAN et les palettes maritimes présents dans les agents sont des règles du domaine source. Les grilles du vérificateur et de l'orchestrateur doivent être adaptées ensemble, ainsi que leurs champs de rapport.
+## 2. Définir rôles et dépôts
 
-`screen-composition` est facultatif. Il prépare la structure fonctionnelle des interfaces et reste subordonné au système de design du projet cible.
+| Tags | Agent | Périmètre à fournir |
+|---|---|---|
+| `[backend]`, `[docs]`, `[infra]`, `[simulator]` | backend-implementer | Chemins serveur, outils, documentation ou infrastructure |
+| `[frontend]` | frontend-implementer | Chemins du client, composants existants, maquette et contrôles UI |
+| `[station]`, `[contract]`, `[bord]` logiciel | station-implementer | Checkout d'intégration ou de contrats autorisé |
+| `[decision]` | Utilisateur | Décision à prendre |
+| `[firmware]`, `[bord]` matériel | Manuel | Geste matériel, seulement si applicable |
 
-## 2. Adapter les périmètres et les rôles
+Un tag ne détermine pas le dépôt. Sans champ `repo`, une étape appartient à `project`. Une étape externe reçoit un `repo` explicite, déclaré dans `repos`, et son périmètre d'écriture. Le dépôt de planification reste en lecture seule pour un agent exécutant ailleurs. Fournir `planningRoot` pour qu'il lise les agents et leur contrat commun au bon emplacement.
 
-| Dans le snapshot | À définir dans le projet cible |
-|---|---|
-| `[backend]`, `[docs]`, `[infra]` → backend-implementer | Chemins serveur, documentation et infrastructure autorisés |
-| `[frontend]` → frontend-implementer | Chemins du client et système de design |
-| `[station]`, `[contract]`, `[bord]` → station-implementer | Rôles et dépôts externes réellement utilisés, ou retrait de ces tags |
-| `[simulator]` | Dépôt externe et commandes propres, si applicable |
-| `[decision]` | Décision utilisateur explicite |
-| `[firmware]` et gestes matériels | Travail manuel, si applicable |
+Exemple d'extrait d'entrée d'initialisation du suivi :
 
-Remplacer les chemins absolus `C:\DEV\xplor-station`, `C:\DEV\xplor-contracts` et `C:\DEV\maritime-drone-simulator`. Un agent ne doit jamais recevoir un périmètre d'écriture implicite dans un dépôt externe.
+```json
+{
+  "repos": { "integration": "/chemin/absolu/payments-adapter" },
+  "steps": [
+    { "id": "1", "tag": "backend", "title": "Adapter le calcul" },
+    { "id": "2", "tag": "contract", "repo": "integration", "title": "Adapter le contrat" }
+  ]
+}
+```
 
-Le `frontend-implementer` source contient une ancienne interdiction du chemin `frontend/` pour la V1, alors que ce même chemin désigne désormais la V2 autorisée. Résoudre cette contradiction lors du portage : désigner un seul périmètre client actif et un éventuel chemin legacy distinct.
+Cet extrait complète les autres métadonnées requises par [run-tracker](../tools/history/README.md). Les clés de dépôt des anciennes fixtures sont des exemples, pas un mapping imposé.
 
-## 3. Choisir des modèles disponibles
+## 3. Installer les instructions
 
-Les variantes `opus-*` et `sonnet-*` sont conservées pour la fidélité et les comparaisons historiques. Leurs identifiants ne garantissent pas la disponibilité de ces modèles sur un autre compte ou moteur.
+Copier les quatre skills du cœur avec leurs `assets/` et `evals/`, les agents nécessaires et **`.claude/agents/references/implementation.md`**. Les variantes dépendent de leur agent de base. Conserver aussi [NOTICE](../NOTICE.md) et `third_party/ponytail/LICENSE` lors de la redistribution des adaptations de Ponytail.
 
-Commencer avec `--profile=herite` et les agents de base. Pour utiliser un profil épinglé ou `auto`, adapter conjointement les variantes et les tables de routage d'`execute-plan`, puis vérifier leur résolution sur la plateforme cible. Les métriques des benchmarks correspondent aux campagnes du projet source ; elles ne constituent pas une mesure du portage.
+Copier `tools/history/` et les conventions de `documentation/history/`, en gardant les index vides. Fusionner le routage dans le `CLAUDE.md` existant : nouveau besoin → `analyse-need`, planification → `plan-history-artifact-writer`, grand plan → `shard-plan`, exécution → `execute-plan`. Les autorisations déjà données par l'utilisateur continuent de s'appliquer.
 
-## 4. Adapter les outils et les contrôles
+Les fichiers d'agents utilisent le format Claude Code (`tools:`, `model:`, `effort:`). Un autre moteur doit traduire ce format et les appels d'agents. Commencer par `--profile=herite` ; les profils épinglés exigent des modèles disponibles. Les benchmarks et scripts `*.workflow.js` conservés dépendent de leur environnement historique.
 
-- Les fichiers d'agents sont au format Claude Code : `tools:`, `model:`, `effort:` et variantes déléguées. Un autre moteur doit traduire ce format et les appels d'agents.
-- `mcp__codegraph`, Playwright et les outils `preview_*` sont des intégrations de la plateforme source. Installer les outils nécessaires ou remplacer ces contrôles par des équivalents disponibles.
-- Remplacer les commandes npm et le cliquet de typage backend par les checks du projet. Un contrôle requis impossible à lancer doit être rapporté comme tel.
-- Le CLI `run-tracker.mjs` est indépendant de ces intégrations et ne dépend que de modules intégrés à Node et de Git pour relever le commit de départ.
-- Les scripts `*.workflow.js` des benchmarks nécessitent le moteur Workflow de leur environnement d'origine ; ce ne sont pas des scripts Node autonomes.
+## 4. Vérifier le portage
 
-## 5. Conserver le contrat du suivi
+```powershell
+node --test tools/history/run-tracker.test.mjs
+```
 
-Le CLI utilise par défaut `documentation/history/executions/.etat/` dans le dépôt contenant l'outil. `--root <checkout>` permet de viser un autre checkout.
+Exécuter ensuite un petit plan réel avec une implémentation, une vérification, une décision et une clôture. Contrôler les permissions, les commandes et le journal. Les [évaluations d'agents](../evals/agents/README.md) sont des simulations de décisions, pas une campagne d'exécution sur toutes les stacks.
 
-Le suivi utilise le schéma `workflow-run-state/1`, la clé `project` pour le dépôt principal et la variable `WORKFLOW_REPO_ROOT`. Le CLI, les tests et les exemples utilisent ces mêmes identifiants. Tout lecteur externe ou état créé avant cette neutralisation doit être adapté à ces nouveaux noms ; les dépôts externes se déclarent via `repos`.
+Le verifier doit lire les consommateurs hors du diff quand une interface change et relancer indépendamment les contrôles requis. Un contrôle requis impossible est bloquant ; un contrôle non applicable doit être distingué d'un contrôle reporté au final. La boucle de correction reste limitée à trois itérations.
 
-L'orchestrateur est l'unique auteur de l'état. Les agents d'implémentation ne le modifient pas. Le documentaliste lit l'instantané à la clôture mais écrit uniquement le journal Markdown.
+## 5. Préserver le suivi
 
-## 6. Initialiser l'historique
+Le CLI utilise le schéma `workflow-run-state/1`, la clé principale `project` et la variable `WORKFLOW_REPO_ROOT`. Il écrit par défaut dans `documentation/history/executions/.etat/` ; `--root <checkout>` permet de viser un autre checkout.
 
-Conserver la structure fournie dans `documentation/history/`. `INDEX.md` et `index.jsonl` sont vides au départ ; ne pas importer les index, plans et journaux réels du projet d'origine.
-
-Fusionner dans les consignes du projet : nouveau besoin → `analyse-need` ; planification → `plan-history-artifact-writer` ; grand plan → `shard-plan` ; exécution d'un plan existant → `execute-plan`. Une autorisation déjà donnée par l'utilisateur continue de s'appliquer.
-
-Valider ensuite un petit plan contenant une implémentation, sa vérification, une décision utilisateur et une clôture. Vérifier que l'état et le journal reflètent les faits observés ; un test du CLI ne valide pas le comportement de tous les agents.
+L'orchestrateur est l'unique auteur de l'état. Les agents rendent des rapports ; le documentaliste lit l'instantané et écrit seulement le journal Markdown. Le statut du plan, celui du rapport implementer et le verdict verifier restent distincts.

@@ -10,7 +10,9 @@
 
 Les sources copiées comprennent cinq skills (quatre du cœur et le compagnon `screen-composition`), leurs templates et évaluations, les agents et variantes, le CLI de suivi avec ses tests et exemples, ainsi que les benchmarks de profils d'exécution.
 
-Les fichiers ont d'abord été copiés, puis adaptés pour retirer le nom du projet d'origine. Le manifeste conserve les empreintes d'origine dans `sourceSha256` et les empreintes des fichiers actuels dans `sha256`. Les documents d'accueil et de portage, les conventions d'historique vides et les fichiers de configuration Git de ce dépôt sont ajoutés pour présenter l'extraction.
+Les fichiers ont d'abord été copiés, puis adaptés pour retirer le nom du projet d'origine. Les agents, le routage et les templates actifs ont ensuite été rendus génériques : stack, chemins, règles métier et contrôles proviennent du projet cible. Le manifeste conserve les empreintes d'origine dans `sourceSha256` et celles des fichiers actuels dans `sha256`. Les fichiers ajoutés sont inventoriés séparément sous `addedFiles`.
+
+Les évaluations et benchmarks historiques conservent leurs scénarios d'origine à titre d'exemples. Ils n'imposent aucune architecture aux agents actuels.
 
 Le code applicatif, les paramètres de lancement, les configurations MCP locales, les secrets, les index d'historique réels, les conversations, les journaux d'exécution privés, les skills métier de l'application et les documents opérationnels sont exclus.
 
@@ -20,4 +22,6 @@ Le nom du dépôt décrit l'inspiration de la méthode locale. Cette extraction 
 
 ## Licence
 
-Le projet source ne fournit pas de fichier de licence applicable à cette extraction. Aucune licence de redistribution, notamment MIT, n'est ajoutée par cette opération. Les références à des projets tiers ou à leurs licences dans les documents historiques ne déterminent pas la licence des fichiers locaux.
+Les principes communs d'implémentation et la revue du verifier sont adaptés de Ponytail `v5.0.0`, commit `b088b2df6e08d4306c6a3c3d575fe38c2d2d2989`. [NOTICE](../NOTICE.md) précise les références et adaptations ; [la notice MIT originale](../third_party/ponytail/LICENSE) accompagne ces éléments. Aucun hook de session ou mode global de Ponytail n'est installé.
+
+Le projet source ne fournit pas de fichier de licence applicable à l'ensemble de l'extraction. Aucune licence générale de redistribution n'est ajoutée aux autres fichiers. Les références à des projets tiers ou à leurs licences dans les documents historiques ne déterminent pas la licence de tout le dépôt.

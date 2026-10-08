@@ -213,6 +213,12 @@ Un `status: null` d'implementer ou un `verdict: null` de verifier signifie
 
 ### Plans découpés, multi-dépôts
 
+Le tag choisit le rôle, pas le dépôt. Sans `repo`, une étape utilise `project`.
+Toute cible extérieure reçoit une clé `repo` explicite, correspondant à une
+entrée de `repos`. Les anciens noms de dépôts dans les exemples historiques
+sont des clés d'exemple, pas des noms réservés ou des cibles implicites.
+
+
 - `plan.form` dit quelle forme le workflow a lue. En cas de doublon mono +
   dossier, le mono l'emporte et l'événement `run-started` porte l'avertissement
   `doublon mono + découpé : mono utilisé`.

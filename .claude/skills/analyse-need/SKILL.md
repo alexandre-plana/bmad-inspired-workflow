@@ -217,8 +217,7 @@ mêmes ambiguïtés).
   initial en cas d'ambiguïté pendant l'exécution.
 - **`shard-plan`** — pas de lien direct ; le sharding est une opération
   post-plan, sans interaction avec les briefs.
-- **`project-standards`** — si le brief introduit un nouveau type de
-  donnée opérationnelle, une nouvelle norme externe, ou un nouvel
-  adaptateur, mentionner explicitement dans le brief que la conformité
-  aux invariants `project-standards` devra être validée par le writer
-  puis par les implementers.
+- **Règles du projet cible** — si le brief introduit un nouveau modèle ou
+  un contrat, identifier les contraintes réellement documentées dans le
+  projet et les références existantes à transmettre au writer puis aux
+  implémenteurs. Ne pas imposer une norme ou une skill absente.

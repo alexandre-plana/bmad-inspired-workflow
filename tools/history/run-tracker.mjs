@@ -710,7 +710,6 @@ function normalizeStep(raw, warnings) {
     role = roleByTag[tag] ?? null;
     if (!role) warnings.push(`étape ${id} : tag [${tag}] sans rôle connu`);
   }
-  const repoByRole = { simulator: 'simulator', station: 'xplor-station', bord: 'xplor-station', contract: 'xplor-contracts' };
   const complexity = raw.complexity ?? null;
   if (complexity !== null) oneOf(`complexity (étape ${id})`, complexity, COMPLEXITIES);
   return {
@@ -721,7 +720,7 @@ function normalizeStep(raw, warnings) {
     kind,
     title,
     complexity,
-    repo: raw.repo ?? repoByRole[tag.includes('+') ? role : tag] ?? 'project',
+    repo: raw.repo ?? 'project',
   };
 }
 

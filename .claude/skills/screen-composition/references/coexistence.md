@@ -6,13 +6,13 @@
 
 > Quelle structure fonctionnelle aide le mieux l'utilisateur à comprendre, décider et agir ?
 
-Un skill projet tel que `frontend-ui-ux` répond à :
+Une référence ou un skill UI/UX projet répond à :
 
 > Comment cette structure doit-elle être matérialisée dans CE produit, sous SES normes, SON design system et SES contraintes ?
 
 ## Règle de priorité
 
-1. Doctrine, réglementation, sécurité et standards métier que le projet déclare **non surchargeables** (dans le projet cible : couches 1 et 2 de `frontend-ui-ux`). Une demande explicite ne les lève pas ; elle devient un écart à arbitrer.
+1. Doctrine, réglementation, sécurité et standards métier que le projet déclare **non surchargeables**. Une demande explicite ne les lève pas ; elle devient un écart à arbitrer.
 2. Exigences explicites de la tâche, dans les limites fixées par 1.
 3. Maquette contractuelle / oracle du projet, dans les limites fixées par 1–2.
 4. Design system, composants et conteneurs imposés par le projet.

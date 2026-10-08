@@ -49,11 +49,11 @@ Exemples acceptés :
    du contenu de chaque bullet, sans modifier le fichier source (les tags sont
    stockés en mémoire d'exécution).
 4. Les subagents de base `backend-implementer`, `frontend-implementer`,
-   `verifier`, `documenter` existent sous `.claude/agents/`. Si le plan porte
-   des étapes `[station]`, `[bord]` ou `[contract]` (plan multi-dépôts XPLOR),
-   `station-implementer` doit exister aussi, et les dépôts frères visés
-   (`C:\DEV\xplor-station`, `C:\DEV\xplor-contracts`) doivent être clonés —
-   sauf pour l'étape dont l'objet est justement de les créer.
+   `verifier`, `documenter` existent sous `.claude/agents/`, avec les règles
+   communes sous `agents/references/`. Pour une étape `[station]`, `[bord]`
+   logicielle ou `[contract]`, `station-implementer` doit exister aussi.
+   Chaque checkout et périmètre d'écriture est explicitement résolu depuis
+   le plan ; aucune cible ne dépend d'un nom de dépôt ou d'un chemin machine.
 5. Les variantes de profil ne sont requises que si le profil d'exécution
    retenu (Phase 1, étape 0) les sollicite — la vérification de leur présence
    est donc **différée** à la résolution du profil :
@@ -72,6 +72,25 @@ Exemples acceptés :
    - profil `sonnet` → `verifier-opus-5` ;
    - profil `herite` → aucune variante.
    Une variante requise mais absente déclenche le [Mode dégradé](#mode-dégradé).
+
+## Contrat du projet cible
+
+Avant le dispatch, relever les instructions locales existantes, les critères
+et règles métier du plan, les checkouts et chemins autorisés, puis les commandes
+applicables dans les manifests, la CI et la documentation. Les skills du projet
+et intégrations de recherche/preview sont utilisées lorsqu'elles existent ;
+aucune stack, norme de domaine, commande npm ou skill métier n'est imposée.
+
+Chaque prompt d'agent transmet : `planningRoot`, racine du dépôt de planification (pour lire
+les prompts et les règles communes), racine du checkout d'exécution, clé
+`repo`, chemins autorisés, critères d'acceptation et contrôles requis avec
+leur commande et répertoire. Une cible ambiguë bloque le dispatch jusqu'à
+résolution. Les autorisations et décisions déjà données restent applicables.
+
+Le tag choisit un rôle ; le plan choisit un dépôt. Dans le suivi, `project`
+désigne le checkout principal par défaut. Toute cible extérieure est déclarée
+dans `repos` et chaque étape concernée reçoit explicitement `repo` ; le tracker
+n'infère pas de dépôt à partir de `[station]`, `[contract]` ou `[simulator]`.
 
 ## Procédure
 
@@ -173,20 +192,17 @@ continue).
 5. Pour les étapes `[decision]` : marquer comme « pause utilisateur » — pas de
    subagent invoqué, l'orchestrateur s'arrête, présente le contexte, attend
    instruction.
-5 bis. Pour les étapes **manuelles** — `[firmware]`, et la partie **matérielle**
-   d'une étape `[bord]` (geste sur le banc : Pi, alimentation, câblage, horloge
-   filmée, mesure sur la machine) : aucun subagent n'est invoqué. L'orchestrateur
-   présente l'étape, conduit le geste **avec l'utilisateur** (ou l'exécute
-   lui-même par SSH avec son accord explicite, en respectant les règles d'accès
-   au banc), consigne le résultat en mémoire d'exécution, puis passe à la suite.
-   Une étape `[bord]` qui mêle logiciel et matériel est découpée : la partie
-   logicielle va au `station-implementer`, la partie matérielle reste manuelle.
+5 bis. Pour les étapes **manuelles** — `[firmware]`, ou une étape `[bord]`
+   qui exige un geste matériel — ne pas invoquer d'implémenteur. Publier une
+   attente `manual`, conduire l'étape avec l'utilisateur selon ses autorisations
+   et les règles d'accès du projet, puis consigner le résultat. Une étape mêlant
+   logiciel et matériel est découpée ; seul le logiciel est délégué.
 6. Décider du mode worktree : par défaut **off**. Si l'utilisateur a passé
    `--isolated` ou demande l'isolement, activer `isolation: 'worktree'` pour
    les invocations specialists.
-7. Décider du mode sync Gitea : par défaut **off**. Si `--sync-gitea`, le
-   signaler au `documenter` lors de son invocation de clôture (voir section 14
-   de l'artefact de plan de référence pour le détail futur).
+7. Le champ sync Gitea reste réservé et **off** par défaut. Si `--sync-gitea`,
+   signaler que la synchronisation n'est pas implémentée dans ce workflow ;
+   ne l'activer que si le projet fournit explicitement une intégration.
 8. **Ne pas** invoquer le `documenter` à l'initialisation. Le journal
    d'exécution est désormais écrit en **une seule passe** en Phase 3 (clôture),
    à partir des résumés d'étapes accumulés en mémoire d'exécution tout au long
@@ -218,6 +234,14 @@ Pour chaque étape dans l'ordre :
 
 2. **Sinon** :
 
+   Pour une étape `[verify]`, sauter a. et b. et invoquer directement le
+   verifier du profil en c., avec le plan et les artefacts à contrôler, sans
+   rapport implementer fictif. Publier son lancement et son rapport sur cette
+   étape. Un échec nécessitant du code retourne à l'étape d'implémentation
+   autorisée qui le produit ; si elle n'existe pas ou que le périmètre manque,
+   escalader pour définir la correction. Ne pas inventer un implementer pour
+   ce tag. La vérification seule peut être relancée après remise en état.
+
    a. **Invocation specialist** — le `subagent_type` et le paramètre `model`
       dépendent du **profil d'exécution** retenu en Phase 1 (cf.
       [Profils d'exécution](#profils-dexécution-modèle--effort)) :
@@ -248,25 +272,20 @@ Pour chaque étape dans l'ordre :
 
       | Tag | `<role>` | Dépôt d'exécution |
       |---|---|---|
-      | `[backend]`, `[docs]`, `[infra]` | `backend` | `project` |
-      | `[simulator]` | `backend` | dépôt externe `C:\DEV\maritime-drone-simulator` |
-      | `[frontend]` | `frontend` | `project` |
-      | `[station]`, `[bord]` (logiciel) | `station` | dépôt frère `C:\DEV\xplor-station` |
-      | `[contract]` | `station` | dépôt frère `C:\DEV\xplor-contracts` |
-      | `[bord]` (matériel), `[firmware]` | _aucun — manuel_ | banc (Phase 1, étape 5 bis) |
+      | `[backend]`, `[docs]`, `[infra]`, `[simulator]` | `backend` | checkout déclaré par le plan |
+      | `[frontend]` | `frontend` | checkout déclaré par le plan |
+      | `[station]`, `[contract]`, `[bord]` logiciel | `station` | checkout déclaré par le plan |
+      | `[verify]` | verifier du profil, sans implémentation | checkouts et artefacts déclarés |
+      | `[bord]` matériel, `[firmware]` | aucun — manuel | cible et accès définis par le plan |
 
-      **Étapes hors de ce dépôt** (`station`, et `[simulator]`) : le prompt nomme
-      le dépôt visé par son chemin absolu ; `isolation: 'worktree'` ne s'y
-      applique pas (le worktree du harnais est celui de `project`) — avant le
-      dispatch, l'orchestrateur vérifie que le dépôt visé est propre et sur la
-      branche attendue, et le consigne. Le rôle `station` a **quatre variantes de
-      profil** : `station-implementer-sonnet-5-5`,
-      `station-implementer-opus-5-5-medium`, `station-implementer-opus-5-5` (les
-      trois paliers du profil `auto`) et `station-implementer-opus-4-8` ; sous
-      tout autre profil `opus-*`, il s'exécute en `station-implementer`
-      (inherit), ce que le journal consigne comme un fallback `herite` pour ce
-      seul rôle (cf. [Mode dégradé](#mode-dégradé)).
+      **Étapes dans un autre dépôt** : vérifier son état et la branche attendue,
+      les permissions du plan et ses commandes propres. Ne pas appliquer le
+      worktree du dépôt principal à cette cible : fournir son checkout exact.
+      Le rôle `station` dispose des variantes `sonnet-5-5`, `opus-5-5-medium`,
+      `opus-5-5` et `opus-4-8` ; sous un autre profil épinglé, consigner le
+      fallback `herite` pour ce rôle (voir Mode dégradé).
       Le prompt construit inclut :
+      - le contrat du projet cible ci-dessus, avec périmètres et contrôles ;
       - le contenu textuel de l'étape (avec son tag) ;
       - les sections **4 (Périmètre)**, **5 (Hors périmètre)**, **8 (Modifications attendues)**, **9 (Validation)** de l'artefact ;
       - les rapports verifier des étapes précédentes pertinentes (au moins étape n-1 et toutes les étapes `[decision]` ou `[verify]`) — résumés pour les étapes anciennes, intégral pour les 2 dernières ;
@@ -284,60 +303,28 @@ Pour chaque étape dans l'ordre :
       ```
       Agent({
         subagent_type: <selon profil>,  // herite: 'verifier' · opus-*: 'verifier-<profil>' (opus-5-5-medium: 'verifier-opus-5-5') · sonnet-5-5|auto: 'verifier-opus-5-5' · sonnet: 'verifier-opus-5'
-        prompt: rapport implementer + contenu de l'étape + section 9 + scope rapporté
+        prompt: contrat du projet cible + rapport implementer + étape + section 9 + scope rapporté
       })
       ```
-      **Vérification à deux étages.** Pendant la boucle, chaque étape ne subit
-      qu'un **gate rapide** ; la vérification lourde et complète est faite **une
-      seule fois** en Phase 3 (gate final). L'orchestrateur indique explicitement
-      dans le prompt du `verifier` le **mode** à appliquer, d'après la liste des
-      fichiers touchés :
-      - **`docs-config`** — *tous* les fichiers touchés sont des `*.md` /
-        `*.json` / `*.yaml` / `*.yml` hors `src/` (doc, journal, config
-        statique), **aucun** fichier de code compilé ou testé : le `verifier`
-        se contente de **relire** les fichiers touchés et de valider la
-        cohérence du rapport implementer. Aucun lint / test / build (rapportés
-        `skipped`, raison « scope docs/config pur »).
-      - **`step`** (gate rapide, dès qu'un fichier de code est touché) : le
-        `verifier` relance, **scopé aux fichiers touchés**, `lint` (eslint sur
-        les fichiers), `typecheck` (`tsc -b` sans bundle côté frontend ; cliquet
-        `npm run typecheck` côté backend, cf. ci-dessous) et `test`
-        (`vitest related <fichiers touchés>`), plus la golden path preview si la
-        feature est observable. Il **ne lance pas** le `vite build` complet ni la
-        suite de tests intégrale — c'est le rôle du gate final. L'indépendance
-        reste non négociable : même scopés, ces checks sont relancés par le
-        `verifier` même si l'implementer dit `passed`.
+      **Vérification à deux étages.** Le vérificateur applique les modes de
+      `.claude/agents/verifier.md` : `docs-config` pour la documentation et les
+      configurations strictement statiques, `step` pour le code, les fixtures,
+      les schémas exécutés et les configurations qui changent le comportement.
+      Le contenu et ses consommateurs décident du mode, pas le suffixe.
 
-      **Cliquet de typage backend.** Côté backend, `typecheck` désigne
-      `npm run typecheck` (depuis `backend/`) : il compare le compte d'erreurs
-      `checkJs` par fichier à `backend/typecheck-baseline.json`, comme la CI
-      entre le lint et les tests. Il ne se scope pas (tout le backend, 15 à
-      30 s) et se joue en `step` dès qu'un fichier vérifié par
-      `backend/tsconfig.json`, `backend/package.json` ou le lockfile est
-      touché, puis au gate final. Trois règles :
-      - une **hausse** (sortie `1`) est un item bloquant, corrigé par
-        annotations JSDoc — jamais par `--update` ni par une édition de la
-        base ;
-      - `--update` n'enregistre qu'une **baisse réelle** ; c'est l'implementer
-        qui le lance, et la base modifiée rejoint les fichiers touchés de
-        l'étape ;
-      - une sortie **`2`** avec « dépendances de types absentes ou
-        différentes » n'est **pas** une hausse : le `node_modules` du checkout
-        d'exécution n'est pas conforme au lockfile (worktree sans installation
-        propre, ou installation antérieure à une fusion de `main`). Qu'elle
-        soit signalée par l'implementer (`typecheck: not-run`) ou par le
-        `verifier` (item `environnement`), l'orchestrateur lance `npm install`
-        à la racine de ce checkout (pas `npm ci`, qui efface un `node_modules`
-        peut-être en cours d'usage) puis invoque ou ré-invoque le `verifier` ;
-        ce détour **ne compte pas** comme une itération et ne renvoie pas
-        l'étape à l'implementer.
+      Les contrôles de l'étape sont indépendants et ciblés sur son impact.
+      Un contrôle complet ne peut être différé au gate final que si le plan
+      et les règles du projet l'autorisent. Les tests des appelants impactés
+      restent dans le périmètre de vérification, même hors du diff.
 
-      Pour une étape exécutée dans un **dépôt frère** (`station`), le `verifier`
-      applique les mêmes modes, mais relance les commandes de vérification
-      listées dans `.claude/agents/station-implementer.md` (§ Vérifications),
-      depuis le dépôt frère, à la place des commandes npm de `project`. Tant
-      qu'une commande n'y est pas fixée, le check est rapporté `skipped` avec
-      cette raison — jamais `passed`.
+      Une commande requise indisponible est un `fail` bloquant de règle
+      `environnement`, jamais un `skipped`. L'orchestrateur applique les
+      instructions de remise en état du projet dans le checkout concerné,
+      sans inventer de commande d'installation ni modifier de baseline,
+      puis relance le vérificateur. Ce détour ne compte pas comme une nouvelle
+      itération de code. Si l'obstacle reste non résolu, publier une attente
+      utilisateur au lieu de boucler. Pour les dépôts externes, appliquer le
+      même contrat avec leurs commandes propres.
 
       Le verdict de ce gate rapide pilote la boucle implement ↔ verify de
       l'étape courante.
@@ -353,8 +340,8 @@ Pour chaque étape dans l'ordre :
         **sans** invoquer le `documenter` à ce stade. Passer à l'étape suivante.
       - `fail` : ré-invoquer le specialist avec le rapport verifier en entrée
         et `iteration: n+1` — sauf si le seul item bloquant est de règle
-        `environnement` (sortie `2` du cliquet de typage backend) : remettre le
-        checkout en conformité et ré-invoquer le `verifier`, cf. c. Sous le
+        `environnement` (contrôle requis indisponible) : appliquer la remise
+        en état documentée puis ré-invoquer le `verifier`, cf. c. Sous le
         profil `auto`, l'itération suivante
         **monte d'un palier** (`simple` → `standard` → `complexe` ; un palier
         `complexe` reste `complexe`) : le nouveau specialist reçoit le rapport
@@ -373,21 +360,15 @@ Pour chaque étape dans l'ordre :
 
 ### Phase 3 — Clôture
 
-1. **Gate final** — si au moins une étape a touché du code (hors plan
-   100 % `docs-config`), invoquer le verifier du profil (`herite` → `verifier` ;
+1. **Gate final** — si au moins une étape a touché du code, si un contrôle
+   a été différé, ou si le plan exige une validation finale même statique, invoquer le verifier du profil (`herite` → `verifier` ;
    `opus-*` → `verifier-<profil>`, sauf `opus-5-5-medium` → `verifier-opus-5-5` ; `sonnet-5-5` et `auto` → `verifier-opus-5-5` ; `sonnet` → `verifier-opus-5`) une dernière fois en
-   **mode `final`** : il relance la vérification **complète et non scopée** sur
-   chaque sous-projet touché pendant l'exécution — `lint` intégral,
-   `npm run typecheck` côté backend (cliquet de typage, cf. Phase 2, c.),
-   `npm run build` complet (`tsc -b && vite build` côté frontend), `npm test`
-   intégral (ou `./test-all.ps1` si le scope cumulé est cross-projects), et la
-   golden path preview sur les features observables. C'est ce gate qui attrape
-   les régressions cross-étape que les gates `step` scopés ont pu laisser passer.
-   Si des étapes ont touché un **dépôt frère** (`xplor-station`,
-   `xplor-contracts`) ou le simulateur externe, le gate final y relance aussi
-   la vérification complète propre à ce dépôt (commandes de
-   `station-implementer.md` § Vérifications ; `npm test` côté simulateur, en
-   sauvegardant puis réalignant son `config.json`).
+   **mode `final`** : il relance les contrôles complets exigés par le plan et
+   la CI pour chaque sous-projet et checkout touché, puis vérifie l'intégration
+   entre étapes et les parcours d'acceptation applicables. Aucun langage,
+   outil de build ou protocole UI n'est imposé. Les contrôles pertinents
+   différés pendant les étapes sont joués ici. Le gate final couvre aussi
+   les dépôts externes avec leurs commandes et répertoires propres.
    - `pass` / `pass-with-notes` : continuer la clôture.
    - `fail` : **escalader** à l'utilisateur — afficher le rapport `final`, en
      indiquant les étapes dont les fichiers touchent les zones en échec
@@ -419,8 +400,8 @@ Pour chaque étape dans l'ordre :
    refuse : `plan-status --done-declined`. La clôture du run ne vaut jamais
    passage à `done`.
 4. Si `kind: fix` et que le plan tient en une étape avec succès au premier
-   essai : **proposer** de sauter la phase de doc finale (le journal initial
-   suffit). L'utilisateur décide.
+   essai, garder un journal bref contenant les mêmes faits et contrôles.
+   Le journal est toujours écrit une seule fois à la clôture.
 5. Produire un récap dans la conversation : liste des étapes, verdict de
    chacune, résultat du gate final, chemin du journal d'exécution, suggestion
    de commande de commit (ne **jamais** committer automatiquement).
@@ -454,7 +435,7 @@ génération à l'autre, et ce que le journal d'exécution consigne.
 | `sonnet` | `<role>-implementer` | `sonnet` | `verifier-opus-5` | `documenter` (inherit) |
 
 `<role>` ∈ {`backend`, `frontend`} pour toutes les variantes ; le rôle `station`
-(dépôts frères XPLOR) n'a que les variantes `station-implementer-opus-5-5`,
+(intégrations déclarées) n'a que les variantes `station-implementer-opus-5-5`,
 `station-implementer-opus-5-5-medium`, `station-implementer-sonnet-5-5` et `station-implementer-opus-4-8`, et reste en `station-implementer` (inherit) sous
 les autres profils `opus-*`. **Défaut** si aucun flag `--profile=` ni
 réponse au prompt : `auto`. Ses paliers reprennent des profils mesurés
@@ -501,8 +482,7 @@ proposition contraire validée en Phase 1 (étape 3 bis). Les tags composés
 
 - **`complexe`** dès qu'**un** critère est vrai : architecture ou nouveau
   module structurant ; modèle de domaine, schéma de persistance ou migration de
-  données ; contrat entre composants (événement socket, topic MQTT, route REST,
-  contrat XPLOR) ; plusieurs sous-projets ou plusieurs dépôts dans la même
+  données ; contrat entre composants (API, format partagé ou contrat externe) ; plusieurs sous-projets ou plusieurs dépôts dans la même
   étape ; concurrence, temps réel, rejeu ou performance ; sécurité, autorité de
   contrôle ; spécification ambiguë ou écarts encore à arbitrer ; étape déjà
   échouée lors d'une exécution précédente.
@@ -565,13 +545,13 @@ par l'outil après lecture :
   "plan": "documentation/history/tasks/<artefact>.md",
   "profile": "auto",
   "isolation": "none",
-  "repos": { "xplor-station": "C:/DEV/xplor-station" },
+  "repos": { "integration": "/chemin/absolu/du/depot-cible" },
   "steps": [
     { "id": "1", "tag": "backend", "title": "Titre court", "complexity": "standard" },
     { "id": "2.a", "tag": "backend+frontend", "role": "backend", "title": "Titre court" },
     { "id": "2.b", "tag": "backend+frontend", "role": "frontend", "title": "Titre court" },
     { "id": "3", "tag": "decision", "title": "Titre court" },
-    { "id": "4", "tag": "bord", "kind": "manual", "title": "Geste sur le banc" }
+    { "id": "4", "tag": "station", "repo": "integration", "title": "Contrat partagé" }
   ]
 }
 ```
@@ -581,7 +561,8 @@ identifiants sont ceux du plan, tels quels (`0`, `1b`, `16a`, `29.1`) ; une
 étape à tag composé y figure par ses sous-étapes `N.a`, `N.b`, chacune avec
 son `role`. `plan` reçoit le chemin donné à la skill : l'outil applique la même
 résolution mono / découpé que la Phase 1.0 et lit `slug`, `title`, `kind` et
-`status` dans le frontmatter. `repos` ne liste que les dépôts **hors project**
+`status` dans le frontmatter. `repo` est explicite pour chaque étape extérieure ;
+sans ce champ, elle appartient à `project`. `repos` ne liste que les dépôts externes
 visés par une étape ; l'outil relève la branche et le commit de départ de
 chacun.
 
@@ -658,96 +639,36 @@ cas le plan reste `executing` et le run reste ouvert.
 
 ## Schéma rapport implementer → orchestrateur
 
-Markdown structuré. Chaque rapport DOIT contenir :
-
-```markdown
-## Rapport implementer — étape <numéro>
-
-**status**: success | partial | blocked
-**iteration**: <n>
-
-### Résumé
-<1 à 3 phrases>
-
-### Fichiers touchés
-- `chemin/relatif/au/repo.ext` — CRÉÉ | MODIFIÉ | SUPPRIMÉ : <intention 1 ligne>
-- ...
-
-### Points d'attention
-- <invariant à revérifier, dépendance implicite, hypothèse>
-
-### Vérifications lancées
-- `lint`: passed | failed | not-run — commande: `npm run lint` (cwd: …)
-- `typecheck`: passed | failed | not-run — commande: `npm run typecheck` (cwd: backend) — étapes backend seulement
-- `test`: passed | failed | not-run — commande: `npm test` (cwd: …)
-- `build`: passed | failed | not-run — commande: `npm run build` (cwd: …)
-
-### Questions ouvertes
-<obligatoire si status = blocked, optionnel sinon>
-```
+Le rapport conserve `status: success | partial | blocked`, `iteration`, les
+sections Résumé, Fichiers touchés, Points d'attention, Vérifications lancées
+et Questions ouvertes. Modèle :
+[contrat commun d'implémentation](../../agents/references/implementation.md#rapport-vers-lorchestrateur).
+Les catégories lint/typecheck/test/build sont renseignées selon leur pertinence,
+avec les commandes réelles et leur checkout. `success` requiert les contrôles
+obligatoires réussis ; un élément requis non vérifié donne `partial` ou `blocked`.
+L'UI ajoute Fidélité maquette (référence et écarts, ou n/a).
 
 ## Schéma rapport verifier → orchestrateur
 
-Markdown structuré. Chaque rapport DOIT contenir :
-
-```markdown
-## Rapport verifier — étape <numéro> · itération <n>
-
-**mode**: docs-config | step | final
-**verdict**: pass | pass-with-notes | fail
-**recommendedAction**: merge | fix-and-reverify | escalate-to-user
-
-### Checks lancés
-| Check | Résultat | Détail |
-|---|---|---|
-| lint | pass / fail / skipped | commande + sortie résumée |
-| test | pass / fail / skipped | idem |
-| typecheck | pass / fail / skipped | idem |
-| build | pass / fail / skipped | idem |
-| project-standards | pass / fail / skipped | invariants violés, ou raison du skip |
-| frontend-ui-ux | pass / fail / skipped | hiérarchie d'autorité respectée, ou raison du skip |
-| manual-ui | pass / fail / skipped | preview_* sur golden path, ou raison du skip |
-
-### Items bloquants
-- `fichier:line` — `<rule>` — <message> — `suggestedFix`: <texte ou null>
-- ...
-
-### Items non-bloquants
-- `fichier:line` — `<rule>` — <message> — `suggestedFix`: <texte ou null>
-- ...
-```
+Le rapport conserve `mode: docs-config | step | final`,
+`verdict: pass | pass-with-notes | fail`,
+`recommendedAction: merge | fix-and-reverify | escalate-to-user`,
+Checks lancés, Items bloquants et Items non-bloquants. Le détail et les Limites
+de vérification sont définis dans
+[le contrat du vérificateur](../../agents/verifier.md#rapport-obligatoire).
+Chaque finding porte le cas concret, sa conséquence et le correctif minimal.
+Les checks dépendent du projet ; l'absence d'un contrôle requis reste visible.
 
 ## Critères bloquant vs non-bloquant
 
-Figés. Le `verifier` doit appliquer cette grille à chaque finding.
-
-**Bloquant** :
-
-- Test rouge (`npm test` exit ≠ 0).
-- Erreur TypeScript côté frontend (`tsc` ou Vite build) hors
-  `// @ts-expect-error` explicite.
-- Hausse du cliquet de typage backend (`npm run typecheck` sortie `1`), cliquet
-  non jouable (sortie `2`, item `environnement`) ou compte relevé à la main
-  dans `backend/typecheck-baseline.json`. Les erreurs déjà comptées dans la
-  base sont tolérées : ce ne sont pas des findings.
-- Erreur ESLint de niveau `error`.
-- Violation d'un invariant du modèle de domaine du projet (cf. skill
-  `project-standards` : WGS-84, UTC, provenance, environment, types distincts,
-  adapters externes, `online ≠ controllable`).
-- Violation de la hiérarchie d'autorité UI (cf. skill `frontend-ui-ux` : une
-  règle Tailwind qui surcharge une règle OTAN ou OpenBridge sans justification
-  documentée).
-- Build cassé (`npm run build` exit ≠ 0).
-- Crash de l'app sur la golden path observée via `preview_*`.
-
-**Non-bloquant** (`pass-with-notes`) :
-
-- Warning ESLint.
-- Baisse du cliquet de typage backend non enregistrée dans la base.
-- Suggestion de naming, commentaire manquant non critique.
-- Optimisation suggérée sans régression observée.
-- Redondance OpenBridge → Tailwind sans impact visuel.
-- Écart mineur de palette IHO S-52 hors situation nuit / alerte.
+Appliquer la grille de gravité de
+[`verifier.md`](../../agents/verifier.md#gravité-et-verdict), pour tous les
+modes et rôles. Un bug démontré, un appelant cassé, un défaut de sécurité ou de
+données, un échec à la charge attendue, une règle obligatoire violée ou un
+contrôle requis rouge/impossible est bloquant. Une amélioration démontrée de
+simplicité, de tests ou de performance peut être non bloquante si les critères
+sont satisfaits. Les préférences personnelles de nommage/style ne sont pas
+publiées comme constats. Aucune grille métier parallèle n'est embarquée ici.
 
 ## Politique de troncature du contexte transmis
 
@@ -837,13 +758,8 @@ l'utilisateur (Phase 1 étape 3 alternative).
 
 ## Articulation avec les autres skills
 
-- **`plan-history-artifact-writer`** : source des artefacts à exécuter.
-- **`project-standards`** : chargée par `verifier` (et indirectement par
-  `backend-implementer`) quand le modèle de données est touché.
-- **`frontend-ui-ux`** : chargée par `frontend-implementer` et par `verifier`
-  quand l'UI est touchée.
-- **`code-review`** (builtin Claude Code) : reste pertinent pour une revue
-  humaine hors orchestration ; cette skill ne le remplace pas, le `verifier`
-  l'englobe sur le périmètre orchestré.
-- **`verify`** (builtin Claude Code) : peut être appelée par le `verifier`
-  quand une vérification de feature en preview est nécessaire.
+- `plan-history-artifact-writer` fournit les plans à exécuter.
+- Les règles d'architecture, de domaine et d'UI sont celles du projet cible ;
+  ses skills existantes et applicables sont transmises dans le contexte.
+- Les outils de recherche, de revue et de preview disponibles peuvent aider
+  le vérificateur, sans remplacer ses preuves ni imposer une intégration.

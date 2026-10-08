@@ -20,7 +20,7 @@ solution ici — uniquement le besoin et son contexte immédiat.>
 ## Contraintes
 
 - <technique — stack, API, format>
-- <norme du projet — OTAN APP-6, S-52, invariants du modèle interne, etc.>
+- <règle explicitement requise par le projet — sécurité, accessibilité, format de données, etc.>
 - <perf / deadline / dépendance externe>
 
 ## Alternatives envisagées

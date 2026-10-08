@@ -9,13 +9,13 @@ description: >-
   écran ou un panneau, qu'on hésite entre modale / panneau / plein écran,
   qu'un dashboard semble surchargé ou qu'une maquette laisse des zones non
   spécifiées — même sans le mot « composition ». Produit un contrat abstrait
-  remis à `frontend-ui-ux`, qui matérialise et garde le dernier mot.
+  remis aux règles UI/UX du projet si elles existent, puis à l’implémenteur.
 
   Ne PAS déclencher pour : implémenter ou styler un écran déjà composé, mapper
-  vers un composant OpenBridge, choisir palette / thème / token, corriger du
+  vers un composant du design system, choisir palette / thème / token, corriger du
   CSS, migrer une librairie UI, implémenter fidèlement une maquette complète
-  sans question de composition, la cartographie tactique (Konva,
-  `MaritimeTacticalMap`, couches `*Layer`), le backend ou le simulateur.
+  sans question de composition, le rendu spécialisé régi par ses propres
+  règles, le backend ou la simulation.
 ---
 
 # Screen Composition — composition fonctionnelle d'un écran
@@ -30,7 +30,7 @@ Ce skill décide de la **structure fonctionnelle** : quoi montrer, dans quel ord
 
 Les règles du projet ont toujours priorité : doctrine métier, normes, accessibilité renforcée, design system, composants imposés, maquettes contractuelles et conventions d'implémentation. L'ordre de priorité complet, le handoff, les deux circuits d'écart et les cas où ne pas charger ce skill sont dans `references/coexistence.md`.
 
-Si le projet possède un skill UI/UX autoritaire tel que `frontend-ui-ux` :
+Si le projet possède une référence ou un skill UI/UX autoritaire :
 
 - `screen-composition` propose la structure fonctionnelle ;
 - le skill projet contraint et matérialise cette structure ;

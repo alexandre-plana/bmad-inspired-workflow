@@ -356,15 +356,35 @@ test('reprise après un arrêt non signalé (session perdue pendant un agent)', 
   assert.equal(step(state, '1').status, 'pending');
 });
 
+test('les tags ne fixent pas le dépôt et une cible explicite conserve sa clé', () => {
+  const box = sandbox({
+    steps: [
+      { id: '1', tag: 'station', title: 'Service local' },
+      { id: '2', tag: 'contract', title: 'Contrat local' },
+      { id: '3', tag: 'bord', kind: 'manual', title: 'Contrôle manuel' },
+      { id: '4', tag: 'simulator', title: 'Scénario local' },
+      { id: '5', tag: 'station', repo: 'payments-adapter', title: 'Adaptateur externe' },
+    ],
+    extra: { repos: { 'payments-adapter': 'C:/work/payments-adapter' } },
+  });
+  const result = box.init();
+  assert.equal(result.code, 0, result.output);
+  assert.doesNotMatch(result.output, /non déclaré/);
+  assert.deepEqual(box.state().steps.map((item) => item.repo), [
+    'project', 'project', 'project', 'project', 'payments-adapter',
+  ]);
+  assert.deepEqual(Object.keys(box.state().repos), ['project', 'payments-adapter']);
+});
+
 test('plan découpé, doublon mono + dossier et plan multi-dépôts', () => {
   const sharded = 'documentation/history/tasks/2026-10-07_09-00_task_suivi-demo/index.md';
   const box = sandbox({
     planPath: sharded,
     steps: [
-      { id: '1', tag: 'contract', title: 'Schéma du message' },
-      { id: '2', tag: 'station', title: 'Passerelle' },
-      { id: '3', tag: 'bord', kind: 'manual', title: 'Câblage du banc' },
-      { id: '4', tag: 'simulator', title: 'Scénario' },
+      { id: '1', tag: 'contract', repo: 'xplor-contracts', title: 'Schéma du message' },
+      { id: '2', tag: 'station', repo: 'xplor-station', title: 'Passerelle' },
+      { id: '3', tag: 'bord', repo: 'xplor-station', kind: 'manual', title: 'Câblage du banc' },
+      { id: '4', tag: 'simulator', repo: 'simulator', title: 'Scénario' },
       { id: '5', tag: 'frontend', title: 'Panneau' },
     ],
     extra: { repos: { 'xplor-station': 'C:/DEV/xplor-station', 'xplor-contracts': 'C:/DEV/xplor-contracts' } },

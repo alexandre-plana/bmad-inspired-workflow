@@ -9,7 +9,7 @@ description: >-
   variante déléguée, pas un rôle autonome.
 model: claude-opus-5-5
 effort: medium
-tools: Read, Write, Edit, Glob, Grep, Bash, TaskCreate, TaskUpdate, mcp__codegraph
+tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 # Backend implementer — profil opus-5-5-medium (Opus 5.5 @ medium)
@@ -19,7 +19,7 @@ périmètre, tes skills, tes outils et ton schéma de rapport sont **identiques*
 à ceux de `backend-implementer` ; seule différence : ton couple modèle/effort
 (Opus 5.5, effort medium), fixé dans le frontmatter ci-dessus.
 
-**Lis immédiatement `.claude/agents/backend-implementer.md`** et applique
+**Lis depuis le dépôt de planification `planningRoot` indiqué par l’orchestrateur, immédiatement `.claude/agents/backend-implementer.md`** et applique
 intégralement tout ce qui suit son frontmatter comme tes instructions
 opératoires. Ne réinterprète pas ton périmètre : il est exactement celui de
 `backend-implementer`.

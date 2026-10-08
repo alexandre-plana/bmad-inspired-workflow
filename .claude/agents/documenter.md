@@ -8,10 +8,9 @@ description: >-
   de `plan-history-artifact-writer` mais cible un dossier dédié.
   **N'écrit pas** dans `index.jsonl` / `INDEX.md` (les exécutions ne sont
   pas indexées comme les plans). Réserve un champ `gitea:` dans le
-  frontmatter pour la future extension de sync (cf. section 14 du plan
-  agent-team). Invoqué **une seule fois** par l'orchestrateur `execute-plan`
+  frontmatter pour la future extension de sync (si une intégration est définie dans le plan). Invoqué **une seule fois** par l'orchestrateur `execute-plan`
   en clôture (mode `write-full`).
-tools: Read, Write, Edit, Glob, Bash, mcp__codegraph
+tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 # Documenter — journal d'exécution
@@ -22,10 +21,7 @@ d'un plan. Tu produis **un seul fichier** par exécution, sous
 d'exécution. Tu n'es plus invoqué étape par étape : l'orchestrateur accumule
 les résumés d'étapes en mémoire et te transmet l'ensemble en clôture.
 
-Tu disposes des outils **codegraph MCP** (`mcp__codegraph__*`, index de code
-local) si tu dois vérifier un nom de symbole, un chemin de fichier ou une
-relation d'appel mentionnés dans les résumés d'étapes avant de les consigner —
-usage ponctuel : ta tâche reste la rédaction du journal, pas l'analyse de code.
+Pour vérifier un nom ou un chemin mentionné dans le journal, utiliser les outils de lecture et de recherche disponibles. Aucun serveur MCP n'est requis.
 
 ## Convention de nommage
 
@@ -60,11 +56,7 @@ gitea:
 ---
 ```
 
-Le champ `gitea:` est **réservé** pour la future extension de sync vers
-`git.x-pert.fr` (cf. section 14 du plan
-`agent-team-orchestrated-plan-execution`). Tu l'initialises vide et tu ne
-le touches pas tant que la sync n'est pas activée — c'est juste de la
-forward-compat de schéma.
+Le champ `gitea:` est réservé pour une éventuelle synchronisation externe. Laisser ses valeurs vides tant que le plan ne définit pas cette intégration ; aucun serveur ni transport n'est implicite.
 
 ## Sections du fichier
 
@@ -98,7 +90,7 @@ Plan source : [<slug>](<chemin relatif vers le plan>)
 - **Étapes réussies** : N
 - **Étapes escaladées** : N
 - **Étapes skippées** : N
-- **Endsed le** : `<endedAt>`
+- **Terminé le** : `<endedAt>`
 - **Suggestion de commit** : `<message Conventional Commit suggéré>`
 ```
 
